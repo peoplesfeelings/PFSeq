@@ -31,8 +31,8 @@ Add the pfseq AAR module to your Android project and make it a dependency for th
 5. Call play() on the sequencer.
 
 ## License
-Copyright (C) 2019 People's Feelings
-Licensed under GPL v2
+Copyright (c) 2019 People's Feelings  
+Licensed under GPL v2  
 https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html
 
 ## Requirements
