@@ -1,8 +1,8 @@
-**Precision Timing Audio Sequencer Module**
+##Precision Timing Audio Sequencer Module
 For audio tools like drum machines, samplers, metronomes, etc.
 
-**Overview**
-The requirements that led to this module:
+####Overview
+######The requirements that led to this module:
  - playing clips with timing precison and accuracy that is good enough for recording a track for production
  - doing this for multiple simultaneous AudioTracks
  - able to change tempo while playing
@@ -11,16 +11,16 @@ The requirements that led to this module:
  - content can be provided as looping or non-looping
  - module easily includable in an android app
  
-Precision is achieved by:
+######Precision is achieved by:
  - streaming PCM audio data to AudioTrack instances and not allowing AudioTrack to underrun
  - keeping count of frames written to an AudioTrack
  - mapping frame-position to JVM nanotime with an AudioTimestamp
  - the time of a given item is calculated relative to the content start time and with adequate precision
 
-**Installation**
+####Installation
 Add the pfseq AAR module to your Android project and make it a dependency for the project's app module. You can get the AAR from this demo app's *seq\build\outputs\aar* directory.
 
-**Usage**
+####Usage
 **1.** Extend PFSeq and implement the abstract method getNotification - Unless the RUN_IN_FOREGROUND config value is set to false, you will need to return a Notification object
 **2.** Extend PFSeqActivity for any activity that will interact with your sequencer service. Abstract methods:
  - receiveMessage - The sequencer service sends error messages to the activity. Do what you want with them here.
@@ -30,10 +30,10 @@ Add the pfseq AAR module to your Android project and make it a dependency for th
 **4.**Add at least one track to the sequencer, and add at least one "piano roll item" with an audio clip to the track.
 **5.**Call play() on the sequencer.
 
-**License**
+####License
 Copyright (C) 2019 People's Feelings
 Licensed under GPL v2
 https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html
 
-**Requirements**
+####Requirements
  - API level 24
