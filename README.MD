@@ -18,7 +18,7 @@ For audio tools like drum machines, samplers, metronomes, etc.
  - the time of a given item is calculated relative to the content start time and with adequate precision
 
 ## Installation
-Add the pfseq AAR module to your Android project and make it a dependency for the project's app module. You can get the AAR from this demo app's *seq\build\outputs\aar* directory.
+Add the pfseq AAR module to your Android project and make it a dependency for the project's app module. You can get the AAR from this demo app's **pfseq\build\outputs\aar** directory. You may need to run "rebuild project" in Android Studio to generate this.
 
 ## Usage
 1. Extend PFSeq and implement the abstract method getNotification - Unless the RUN_IN_FOREGROUND config value is set to false, you will need to return a Notification object
