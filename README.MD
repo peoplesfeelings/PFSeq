@@ -21,7 +21,7 @@ For audio tools like drum machines, samplers, metronomes, etc.
 Add the pfseq AAR module to your Android project and make it a dependency for the project's app module. You can get the AAR from this demo app's **pfseq\build\outputs\aar** directory. You may need to run "rebuild project" in Android Studio to generate this.
 
 ## Usage
-1. Extend PFSeq and implement the abstract method getNotification - Unless the RUN_IN_FOREGROUND config value is set to false, you will need to return a Notification object
+1. Extend PFSeq and implement the abstract method getNotification(). It will need to return a Notification object unless the RUN_IN_FOREGROUND config value is set to false.
 2. Extend PFSeqActivity for any activity that will interact with your sequencer service. Abstract methods:
   - receiveMessage - The sequencer service sends error messages to the activity. Do what you want with them here.
   - onConnect - Called when the activity becomes bound. This is where you set up UI listeners that call public methods on your sequencer service (if bound).
