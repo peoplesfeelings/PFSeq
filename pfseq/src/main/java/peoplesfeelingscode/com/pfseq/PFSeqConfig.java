@@ -22,6 +22,7 @@ MIN_WRITABLE_CONTENT_NANO - when calling nextPianoRollItemAfter() to get the ite
     pass it a nanotime that is slightly later than the nano start time of the earlier item.
     this should be long enough that calculations are safe, but short enough that it's unlikely
     a subsequent item would be skipped because it was too close to the earlier one. nanoseconds
+POLLING_CONTROL_THREAD_MILLIS -
 REPEATING - whether the piano roll loops or plays once
 SMALLEST_STOPGAP_SILENCE_MILLIS - used while syncing so we don't bother writing tiny amounts of silence
 SYNC_MARGIN_MILLIS - how far before MIN_MILLIS_AHEAD_TO_WRITE is it ok for the buffer to be in order
@@ -89,7 +90,7 @@ public class PFSeqConfig implements Serializable {
         put(MIN_MILLIS_AHEAD_TO_WRITE, 400);
         put(MIN_WRITABLE_CONTENT_NANO, 5000);
         put(ONGOING_NOTIF_ID, -1);
-        put(POLLING_CONTROL_THREAD_MILLIS, 5);
+        put(POLLING_CONTROL_THREAD_MILLIS, 50);
         put(SAMPLE_RATE, 44100);
         put(SMALLEST_STOPGAP_SILENCE_MILLIS, 50);
         put(SYNC_MARGIN_MILLIS, 100);

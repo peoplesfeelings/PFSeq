@@ -324,10 +324,10 @@ public class PFSeqTrack {
         return shortArray;
     }
     public short[] abridge(short[] pcm, int newLengthFrames) {
-        int oldLength = pcm.length;
+        int oldLengthFrames = pcm.length / 2;
         int fadeOutLengthFrames = getSeq().getConfig().getInt(FADE_LENGTH_FRAMES);
 
-        if (newLengthFrames > oldLength) {
+        if (newLengthFrames > oldLengthFrames) {
             getSeq().sendMessageToActivity(new PFSeqMessage(MESSAGE_TYPE_ERROR, "can't abridge clip to longer length"));
             return pcm;
         }
@@ -343,23 +343,29 @@ public class PFSeqTrack {
     private short[] applyFadeOut(short[] pcm, int fadeLengthFrames) {
         // this method definition assumes channel count is 2
 
+        int pcmLengthFrames = pcm.length / 2;
+
 //        long startingClock = System.currentTimeMillis();
 
-        int fadeLengthSafe = fadeLengthFrames;
-        // trim in case it's longer
-        if (fadeLengthFrames > pcm.length) {
-            fadeLengthSafe = pcm.length;
+        // in case config value fade length is greater than clip length
+        int fadeLengthFramesSafe = fadeLengthFrames;
+        if (fadeLengthFrames > pcmLengthFrames) {
+            fadeLengthFramesSafe = pcmLengthFrames;
         }
 
-        int startingFrame = pcm.length - fadeLengthSafe * 2;
+        int startingFrame = pcmLengthFrames - fadeLengthFramesSafe;
+        int startingShort = startingFrame * 2;
+        Log.d(LOG_TAG, "pcmLengthFrames: " + pcmLengthFrames);
+        Log.d(LOG_TAG, "fadeLengthFramesSafe: " + fadeLengthFramesSafe);
+        Log.d(LOG_TAG, "startingFrame: " + startingFrame);
         int i;
         double distanceFromEndFrames;
         double positionInFade = 1;
 
-        for (i = startingFrame; i < pcm.length; i += 2) {
+        for (i = startingShort; i < pcm.length; i += 2) {
             distanceFromEndFrames = ((pcm.length - 2) - i) / 2;
             // starts at (below) 1 and goes to 0
-            positionInFade = (double) distanceFromEndFrames / fadeLengthSafe;
+            positionInFade = (double) distanceFromEndFrames / fadeLengthFramesSafe;
 
             // first channel of frame
             pcm[i] = (short) (pcm[i] * positionInFade);

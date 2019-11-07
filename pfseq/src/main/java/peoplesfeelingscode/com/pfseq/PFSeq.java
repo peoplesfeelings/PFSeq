@@ -136,8 +136,6 @@ public abstract class PFSeq extends Service {
             sendMessageToActivity(new PFSeqMessage(MESSAGE_TYPE_ERROR, "Sequencer config not valid"));
             return false;
         }
-        isSetUp.set(false);
-
         this._config = config;
         tracks = new ArrayList<PFSeqTrack>();
         isSetUp.set(true);
@@ -419,17 +417,19 @@ public abstract class PFSeq extends Service {
                                 if (nextPRItem == null) {
                                     if (isPlaying()) {
                                         // config is set to non-repeating and no more items. write silence
+                                        Log.d(LOG_TAG, "posting write - silence only: " + (nanoWeWantWrittenUntil - soonestWritableNano) + " ns. nextPRItem is null");
                                         writeSilenceToTrack(track, nanoWeWantWrittenUntil - soonestWritableNano);
                                     } else {
                                         // sequencer stopping
                                         break outerloop;
                                     }
                                 } else {
-                                    Log.d(LOG_TAG, "nextPrItem: " + nextPRItem.getName());
+//                                    Log.d(LOG_TAG, "nextPrItem: " + nextPRItem.getName());
                                     long nextPRItemNano = nextPRItem.soonestNanoAfter(soonestWritableNano);
 
                                     if (nextPRItemNano > nanoWeWantWrittenUntil) {
                                         // next item is after time we want written until. write silence
+                                        Log.d(LOG_TAG, "posting write - silence only: " + (nanoWeWantWrittenUntil - soonestWritableNano) + " ns. next item is after time we want written until");
                                         writeSilenceToTrack(track, nanoWeWantWrittenUntil - soonestWritableNano);
                                     } else {
                                         short[] clipPcm = nextPRItem.getClip().getPcm();
@@ -456,6 +456,7 @@ public abstract class PFSeq extends Service {
                                 }
                             } else {
                                 // piano roll is empty - write silence
+                                Log.d(LOG_TAG, "posting write - silence only: " + (nanoWeWantWrittenUntil - soonestWritableNano) + " ns. piano roll is empty");
                                 writeSilenceToTrack(track, nanoWeWantWrittenUntil - soonestWritableNano);
                             }
                         }
@@ -566,7 +567,7 @@ public abstract class PFSeq extends Service {
     }
     private void writeSilenceToTrack(PFSeqTrack track, long silenceNano) {
         final short[] silence = track.makeSilence(nanoToFrames(silenceNano));
-        Log.d(LOG_TAG, "posting write - silence only: " + silenceNano + " ns");
+//        Log.d(LOG_TAG, "posting write - silence only: " + silenceNano + " ns");
         track.postWrite(silence, true);
     }
 
@@ -621,7 +622,7 @@ public abstract class PFSeq extends Service {
         return joinedArray;
     }
 
-// timing stuff
+    // timing stuff
     public int beatsSinceTempoStart(long nano) {
         if (tempoStartNanotime == null) {
             sendMessageToActivity(new PFSeqMessage(MESSAGE_TYPE_ERROR, "tempoStartNanotime not set"));
