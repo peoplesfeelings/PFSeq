@@ -27,7 +27,7 @@ import static peoplesfeelingscode.com.pfseq.PFSeqConfig.MIN_BPM;
 import static peoplesfeelingscode.com.pfseq.PFSeqConfig.MIN_MILLIS_AHEAD_TO_WRITE;
 import static peoplesfeelingscode.com.pfseq.PFSeqConfig.MIN_WRITABLE_CONTENT_NANO;
 import static peoplesfeelingscode.com.pfseq.PFSeqConfig.ONGOING_NOTIF_ID;
-import static peoplesfeelingscode.com.pfseq.PFSeqConfig.POLLING_CONTROL_THREAD_MILLIS;
+import static peoplesfeelingscode.com.pfseq.PFSeqConfig.CONTROL_THREAD_POLLING_MILLIS;
 import static peoplesfeelingscode.com.pfseq.PFSeqConfig.RUN_IN_FOREGROUND;
 import static peoplesfeelingscode.com.pfseq.PFSeqConfig.SAMPLE_RATE;
 import static peoplesfeelingscode.com.pfseq.PFSeqConfig.SMALLEST_STOPGAP_SILENCE_MILLIS;
@@ -365,7 +365,7 @@ public abstract class PFSeq extends Service {
             public void run(){
                 Log.d(LOG_TAG, "contentWriting started");
 
-                int pollingMillis = getConfig().getInt(POLLING_CONTROL_THREAD_MILLIS);
+                int pollingMillis = getConfig().getInt(CONTROL_THREAD_POLLING_MILLIS);
                 int minMillisAheadToWrite = getConfig().getInt(MIN_MILLIS_AHEAD_TO_WRITE);
                 int framesToLeaveBeforeNextItem = getConfig().getInt(FRAMES_TO_LEAVE_BEFORE_NEXT_ITEM);
                 int minWritableContentNano = getConfig().getInt(MIN_WRITABLE_CONTENT_NANO);

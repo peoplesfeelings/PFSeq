@@ -6,6 +6,8 @@ BUFFER_SIZE_BYTES - this affects the beginning of the play state. the buffer nee
     content begins (because you need the audiotimestamp before you can measure precisely and you need
     to play before you get the audiotimestamp and you need a full buffer before it will play). note that
     this is the requested buffer size (the native layer decides) so actual buffer size may differ.
+CONTROL_THREAD_POLLING_MILLIS - how frequently the loop in the control thread iterates. should be much
+    less than MIN_MILLIS_AHEAD_TO_WRITE. can cause underrun if it's too large.
 FADE_LENGTH_FRAMES - this is just meant to prevent clipping, when audio clips are abridged. adjust to
     taste. making it too large could cause errors on some devices
 FRAMES_TO_LEAVE_BEFORE_NEXT_ITEM - you want this as low as possible without having a second PR item get
@@ -22,7 +24,6 @@ MIN_WRITABLE_CONTENT_NANO - when calling nextPianoRollItemAfter() to get the ite
     pass it a nanotime that is slightly later than the nano start time of the earlier item.
     this should be long enough that calculations are safe, but short enough that it's unlikely
     a subsequent item would be skipped because it was too close to the earlier one. nanoseconds
-POLLING_CONTROL_THREAD_MILLIS -
 REPEATING - whether the piano roll loops or plays once
 SMALLEST_STOPGAP_SILENCE_MILLIS - used while syncing so we don't bother writing tiny amounts of silence
 SYNC_MARGIN_MILLIS - how far before MIN_MILLIS_AHEAD_TO_WRITE is it ok for the buffer to be in order
@@ -56,6 +57,7 @@ public class PFSeqConfig implements Serializable {
 
     // keys
     public static final String BUFFER_SIZE_BYTES = "buffer_size_bites";
+    public static final String CONTROL_THREAD_POLLING_MILLIS = "control_thread_polling_millis";
     public static final String FADE_LENGTH_FRAMES = "fade_length_frames";
     public static final String FRAMES_TO_LEAVE_BEFORE_NEXT_ITEM = "frames_to_leave_before_next_item";
     public static final String MAX_BPM = "max_bpm";
@@ -65,7 +67,6 @@ public class PFSeqConfig implements Serializable {
     public static final String MIN_MILLIS_AHEAD_TO_WRITE = "min_millis_ahead_to_write";
     public static final String MIN_WRITABLE_CONTENT_NANO = "min_writable_audio_nano";
     public static final String ONGOING_NOTIF_ID = "ongoing_notif_id";
-    public static final String POLLING_CONTROL_THREAD_MILLIS = "polling_control_thread_millis";
     public static final String REPEATING = "repeating";
     public static final String RUN_IN_FOREGROUND = "run_in_foreground";
     public static final String SAMPLE_RATE = "sample_rate";
@@ -81,6 +82,7 @@ public class PFSeqConfig implements Serializable {
     // default config values
     public static final HashMap<String, Integer> INT_DEFAULTS = new HashMap<String, Integer>() {{
         put(BUFFER_SIZE_BYTES, 100000);
+        put(CONTROL_THREAD_POLLING_MILLIS, 5);
         put(FADE_LENGTH_FRAMES, 2000);
         put(FRAMES_TO_LEAVE_BEFORE_NEXT_ITEM, 100);
         put(MAX_BPM, 1000);
@@ -90,7 +92,6 @@ public class PFSeqConfig implements Serializable {
         put(MIN_MILLIS_AHEAD_TO_WRITE, 400);
         put(MIN_WRITABLE_CONTENT_NANO, 5000);
         put(ONGOING_NOTIF_ID, -1);
-        put(POLLING_CONTROL_THREAD_MILLIS, 50);
         put(SAMPLE_RATE, 44100);
         put(SMALLEST_STOPGAP_SILENCE_MILLIS, 50);
         put(SYNC_MARGIN_MILLIS, 100);
