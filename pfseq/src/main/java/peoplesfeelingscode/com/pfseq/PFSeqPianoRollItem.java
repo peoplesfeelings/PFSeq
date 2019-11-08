@@ -47,6 +47,7 @@ public class PFSeqPianoRollItem {
             beatsOut = itemBeatOfBar - beatsSinceTempoStart;
         }
 
+//        Log.d(LOG_TAG, name + "\nbeatsSinceTempoStart:" + beatsSinceTempoStart + "\ntimeOffset.getPercent(): " + timeOffset.getPercent() + "\nbeatsOut: " + beatsOut + "\noffsetFromBeatNano: " + offsetFromBeatNano);
         return currentBeatNanotime + (long) (beatsOut * nanosPerBeat) + offsetFromBeatNano;
     }
 

@@ -25,6 +25,7 @@ import peoplesfeelingscode.com.pfseq.PFSeqTrack;
 
 import static peoplesfeelingscode.com.pfseq.PFSeq.LOG_TAG;
 import static peoplesfeelingscode.com.pfseq.PFSeqConfig.ONGOING_NOTIF_ID;
+import static peoplesfeelingscode.com.pfseq.PFSeqConfig.TIME_SIG_LOWER;
 import static peoplesfeelingscode.com.pfseq.PFSeqConfig.TIME_SIG_UPPER;
 import static peoplesfeelingscode.com.pfseq.PFSeqMessage.ALERT_MSG_PREFIX;
 import static peoplesfeelingscode.com.pfseq.PFSeqMessage.ERROR_MSG_PREFIX;
@@ -118,6 +119,7 @@ public class MainActivity extends PFSeqActivity {
         HashMap<String, Integer> myConfigInts = new HashMap<String, Integer>() {{
             put(ONGOING_NOTIF_ID, 4346);
             put(TIME_SIG_UPPER, 1);
+            put(TIME_SIG_LOWER, 4);
         }};
 
         PFSeqConfig exampleConfig = new PFSeqConfig(myConfigInts, myConfigBools, null, null);
@@ -150,18 +152,24 @@ public class MainActivity extends PFSeqActivity {
         }
         PFSeqTrack metronomeTrack = new PFSeqTrack(seq, "metronome");
         PFSeqClip clip = new PFSeqClip(seq, audFile);
-        PFSeqTimeOffset timeOffset = PFSeqTimeOffset.make(0, PFSeqTimeOffset.MODE_FRACTIONAL, 0, 1, 0, false, 0);
-        PFSeqPianoRollItem item = new PFSeqPianoRollItem(seq, clip, "the tick", timeOffset);
-        metronomeTrack.addPianoRollItem(item);
-//        timeOffset = PFSeqTimeOffset.make(1, PFSeqTimeOffset.MODE_FRACTIONAL, 0, 1, 0, false, 0);
-//        item = new PFSeqPianoRollItem(seq, clip, "the tick 2", timeOffset);
-//        metronomeTrack.addPianoRollItem(item);
-//        timeOffset = PFSeqTimeOffset.make(2, PFSeqTimeOffset.MODE_FRACTIONAL, 0, 1, 0, false, 0);
-//        item = new PFSeqPianoRollItem(seq, clip, "the tick 3", timeOffset);
-//        metronomeTrack.addPianoRollItem(item);
-//        timeOffset = PFSeqTimeOffset.make(3, PFSeqTimeOffset.MODE_FRACTIONAL, 0, 1, 0, false, 0);
-//        item = new PFSeqPianoRollItem(seq, clip, "the tick 4", timeOffset);
-//        metronomeTrack.addPianoRollItem(item);
+
+        PFSeqTimeOffset timeOffset;
+
+        timeOffset = PFSeqTimeOffset.make(0, PFSeqTimeOffset.MODE_FRACTIONAL, 0, 4, 0,false, 0);
+        PFSeqPianoRollItem item1 = new PFSeqPianoRollItem(seq, clip, "item 1", timeOffset);
+        metronomeTrack.addPianoRollItem(item1);
+
+        timeOffset = PFSeqTimeOffset.make(0, PFSeqTimeOffset.MODE_FRACTIONAL, 0, 4, 1, false, 0);
+        PFSeqPianoRollItem item2 = new PFSeqPianoRollItem(seq, clip, "item 2", timeOffset);
+        metronomeTrack.addPianoRollItem(item2);
+
+        timeOffset = PFSeqTimeOffset.make(0, PFSeqTimeOffset.MODE_FRACTIONAL, 0, 4, 2, false, 0);
+        PFSeqPianoRollItem item3 = new PFSeqPianoRollItem(seq, clip, "item 3", timeOffset);
+        metronomeTrack.addPianoRollItem(item3);
+
+        timeOffset = PFSeqTimeOffset.make(0, PFSeqTimeOffset.MODE_FRACTIONAL, 0, 4, 3, false, 0);
+        PFSeqPianoRollItem item4 = new PFSeqPianoRollItem(seq, clip, "item 4", timeOffset);
+        metronomeTrack.addPianoRollItem(item4);
 
         seq.addTrack(metronomeTrack);
 

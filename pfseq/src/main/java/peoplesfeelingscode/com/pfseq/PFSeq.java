@@ -424,7 +424,6 @@ public abstract class PFSeq extends Service {
                                         break outerloop;
                                     }
                                 } else {
-//                                    Log.d(LOG_TAG, "nextPrItem: " + nextPRItem.getName());
                                     long nextPRItemNano = nextPRItem.soonestNanoAfter(soonestWritableNano);
 
                                     if (nextPRItemNano > nanoWeWantWrittenUntil) {
@@ -631,7 +630,7 @@ public abstract class PFSeq extends Service {
 
         BigDecimal elapsedNanotime = new BigDecimal(nano - tempoStartNanotime.longValue());
         /* adjust scale to taste */
-        BigDecimal beatsElapsed = elapsedNanotime.divide(nanosecondsPerBeat, 0, BigDecimal.ROUND_HALF_DOWN);
+        BigDecimal beatsElapsed = elapsedNanotime.divide(nanosecondsPerBeat, 0, BigDecimal.ROUND_DOWN);
 
         /*
         *                                NANOSECONDS_PER_MINUTE

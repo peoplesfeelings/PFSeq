@@ -246,8 +246,9 @@ public class PFSeqTrack {
 
         long soonestNextNano = Long.MAX_VALUE;
         PFSeqPianoRollItem soonestItem = null;
+        long thisItemNextNano;
         for (PFSeqPianoRollItem item : pianoRoll) {
-            long thisItemNextNano = item.soonestNanoAfter(nano);
+            thisItemNextNano = item.soonestNanoAfter(nano);
             if (thisItemNextNano < soonestNextNano && thisItemNextNano > nano) {
                 soonestNextNano = thisItemNextNano;
                 soonestItem = item;
@@ -355,9 +356,6 @@ public class PFSeqTrack {
 
         int startingFrame = pcmLengthFrames - fadeLengthFramesSafe;
         int startingShort = startingFrame * 2;
-        Log.d(LOG_TAG, "pcmLengthFrames: " + pcmLengthFrames);
-        Log.d(LOG_TAG, "fadeLengthFramesSafe: " + fadeLengthFramesSafe);
-        Log.d(LOG_TAG, "startingFrame: " + startingFrame);
         int i;
         double distanceFromEndFrames;
         double positionInFade = 1;

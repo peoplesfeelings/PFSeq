@@ -15,7 +15,7 @@ public class PFSeqTimeOffset {
     private double percent; // between 0 and 1, inclusive
 
     // only used if mode is FRACTIONAL:
-    private int binaryDivisions; // 1 or binary number like 2, 4, 8, 16, etc
+    private int binaryDivisions; // how many binary divisions you need in a beat. 1 or binary number like 2, 4, 8, 16, etc
     private int binaryPos; // 0-based. 0 for on-beat
     private boolean isTriplet;
     private int tripletPos; // 0-based. 0 for on the binary position. 1 for a third of the way between that and the next binary position, etc
@@ -68,7 +68,7 @@ public class PFSeqTimeOffset {
         if (getMode() == PFSeqTimeOffset.MODE_PERCENT) {
             return percent;
         } else {
-            double theReturn = getBinaryPos() / getBinaryDivisions();
+            double theReturn = ((double) getBinaryPos()) / getBinaryDivisions();
             if (isTriplet()) {
                 return theReturn + ( 1 / getBinaryDivisions() / 3 * getTripletPos() );
             } else {
