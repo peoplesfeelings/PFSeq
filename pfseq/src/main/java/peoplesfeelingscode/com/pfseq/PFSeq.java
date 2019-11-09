@@ -443,8 +443,13 @@ public abstract class PFSeq extends Service {
 
                                             // abridge next clip if item after it occurs before its end
                                             long nextItemLengthNano = framesToNano(nextPRItem.lengthInFrames());
-                                            if (nextPRItemNano + nextItemLengthNano + framesToLeaveBeforeNextItem > itemAfterNextNano) {
+                                            long nextItemEndNano = nextPRItemNano + nextItemLengthNano;
+                                            long nanotoLeaveBeforeNextItem = framesToNano(framesToLeaveBeforeNextItem);
+                                            if (nextItemEndNano + nanotoLeaveBeforeNextItem > itemAfterNextNano) {
                                                 int newLengthFrames = nanoToFrames(itemAfterNextNano - nextPRItemNano) - framesToLeaveBeforeNextItem;
+                                                if (newLengthFrames < 0) {
+                                                    newLengthFrames = 0;
+                                                }
                                                 clipPcm = track.abridge(clipPcm, newLengthFrames);
                                             }
                                         }
