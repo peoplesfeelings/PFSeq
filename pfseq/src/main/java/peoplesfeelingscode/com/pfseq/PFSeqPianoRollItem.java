@@ -4,6 +4,7 @@ import static peoplesfeelingscode.com.pfseq.PFSeqConfig.REPEATING;
 import static peoplesfeelingscode.com.pfseq.PFSeqConfig.TIME_SIG_UPPER;
 
 public class PFSeqPianoRollItem {
+    private boolean enabled;
     private PFSeq seq;
     private PFSeqClip clip;
     private String name;
@@ -14,6 +15,7 @@ public class PFSeqPianoRollItem {
         this.clip = clip;
         this.name = name;
         this.timeOffset = timeOffset;
+        enabled = true;
     }
 
     public long soonestNanoAfter(long nano) {
@@ -50,20 +52,27 @@ public class PFSeqPianoRollItem {
 //        Log.d(LOG_TAG, name + "\nbeatsSinceTempoStart:" + beatsSinceTempoStart + "\ntimeOffset.getPercent(): " + timeOffset.getPercent() + "\nbeatsOut: " + beatsOut + "\noffsetFromBeatNano: " + offsetFromBeatNano);
         return currentBeatNanotime + (long) (beatsOut * nanosPerBeat) + offsetFromBeatNano;
     }
-
     public int lengthInFrames() {
         return getClip().getPcm().length / 2;
     }
 
+    // accessors
     public PFSeqClip getClip() {
         return clip;
     }
-
+    public void setClip(PFSeqClip clip) {
+        this.clip = clip;
+    }
     public PFSeqTimeOffset getTimeOffset() {
         return timeOffset;
     }
-
     public String getName() {
         return name;
+    }
+    public boolean isEnabled() {
+        return enabled;
+    }
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
     }
 }

@@ -248,6 +248,9 @@ public class PFSeqTrack {
         PFSeqPianoRollItem soonestItem = null;
         long thisItemNextNano;
         for (PFSeqPianoRollItem item : pianoRoll) {
+            if (!item.isEnabled()) {
+                continue;
+            }
             thisItemNextNano = item.soonestNanoAfter(nano);
             if (thisItemNextNano < soonestNextNano && thisItemNextNano > nano) {
                 soonestNextNano = thisItemNextNano;
@@ -256,6 +259,16 @@ public class PFSeqTrack {
         }
 
         return soonestItem;
+    }
+
+    public PFSeqPianoRollItem getPrItemByName(String name) {
+        for (PFSeqPianoRollItem item : pianoRoll) {
+            if (item.getName().equals(name)) {
+                return item;
+            }
+        }
+
+        return null;
     }
 
     // timing stuff

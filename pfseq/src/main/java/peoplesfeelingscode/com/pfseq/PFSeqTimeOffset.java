@@ -1,7 +1,25 @@
 package peoplesfeelingscode.com.pfseq;
 
 /*
-This class defines a relative time position that is stored as a percent of a beat or fraction of the duration of a musical bar.
+Time position relative to beginning of musical bar.
+Fractional position corresponds to a "piano roll" user interface that looks like this:
+
+        beginning of bar                                end of bar
+        |                                               |
+        beginning of 1st beat   beginning of 2nd beat   |
+        |                       |                       |
+        -------------------------------------------------
+        |     |     |     |     |     |     |     |     |
+        |     |     |     |     |     |     |    Pos    |
+        |     |     |     |     |     |     |     |     |
+        -------------------------------------------------
+
+        beatOfBar: 1
+        mode: MODE_FRACTIONAL
+        binaryDivisions: 4
+        binaryPos: 3
+        isTriplet: false
+
  */
 
 public class PFSeqTimeOffset {

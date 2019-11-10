@@ -52,30 +52,30 @@ public class MainActivity extends PFSeqActivity {
 
     @Override
     public void onConnect() {
-        if (!getService().isSetUp()) {
-            boolean success = configureSequecer(getService());
+        if (!getSeq().isSetUp()) {
+            boolean success = configureSequecer(getSeq());
             if (success) {
-                setUpTracks(getService());
+                setUpTracks(getSeq());
             }
         }
 
         playbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                getService().play();
+                getSeq().play();
             }
         });
         stopbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                getService().stop();
+                getSeq().stop();
             }
         });
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
                 double bpm = (i / 1000.0 * 1000) + 15;
-                double allowedBpm = getService().setBpm(bpm);
+                double allowedBpm = getSeq().setBpm(bpm);
                 textView.setText(allowedBpm + "");
             }
 
@@ -165,6 +165,7 @@ public class MainActivity extends PFSeqActivity {
 
         timeOffset = PFSeqTimeOffset.make(0, PFSeqTimeOffset.MODE_FRACTIONAL, 0, 4, 2, false, 0);
         PFSeqPianoRollItem item3 = new PFSeqPianoRollItem(seq, clip, "item 3", timeOffset);
+        item3.setEnabled(false);
         metronomeTrack.addPianoRollItem(item3);
 
         timeOffset = PFSeqTimeOffset.make(0, PFSeqTimeOffset.MODE_FRACTIONAL, 0, 4, 3, false, 0);

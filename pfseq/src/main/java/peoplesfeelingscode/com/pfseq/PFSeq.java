@@ -595,6 +595,15 @@ public abstract class PFSeq extends Service {
         Log.d(LOG_TAG, "track " + track.getName() + " - added to sequencer");
         return true;
     }
+    public PFSeqTrack getTrackByName(String name) {
+        for (PFSeqTrack track : tracks) {
+            if (track.getName().equals(name)) {
+                return track;
+            }
+        }
+
+        return null;
+    }
     private boolean allTracksInitialized() {
         if (tracks == null) {
             Log.d(LOG_TAG, "tracks is null");

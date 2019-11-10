@@ -74,7 +74,7 @@ public abstract class PFSeqActivity extends AppCompatActivity {
         Log.d(LOG_TAG, "activity on stop");
     }
 
-    public PFSeq getService() {
+    public PFSeq getSeq() {
         return service;
     }
 
