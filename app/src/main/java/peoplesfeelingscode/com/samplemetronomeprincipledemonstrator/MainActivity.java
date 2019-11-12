@@ -137,7 +137,9 @@ public class MainActivity extends PFSeqActivity {
         File audFile;
         try {
             audFile = File.createTempFile("demo_app_file", "");
-            InputStream ins = getResources().openRawResource(R.raw.guitar_hit_5);
+//            InputStream ins = getResources().openRawResource(R.raw.guitar_hit_5);
+//            InputStream ins = getResources().openRawResource(R.raw.guitar_hit_1_flac);
+            InputStream ins = getResources().openRawResource(R.raw.guitr_hit_1_cbr_mp3);
 //            InputStream ins = getResources().openRawResource(R.raw.dewip_16bit_stereo_smoother);
             OutputStream out = new FileOutputStream(audFile);
 
@@ -165,7 +167,7 @@ public class MainActivity extends PFSeqActivity {
 
         timeOffset = PFSeqTimeOffset.make(0, PFSeqTimeOffset.MODE_FRACTIONAL, 0, 4, 2, false, 0);
         PFSeqPianoRollItem item3 = new PFSeqPianoRollItem(seq, clip, "item 3", timeOffset);
-        item3.setEnabled(false);
+//        item3.setEnabled(false);
         metronomeTrack.addPianoRollItem(item3);
 
         timeOffset = PFSeqTimeOffset.make(0, PFSeqTimeOffset.MODE_FRACTIONAL, 0, 4, 3, false, 0);

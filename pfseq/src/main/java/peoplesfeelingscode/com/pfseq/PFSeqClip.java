@@ -48,7 +48,7 @@ public class PFSeqClip {
 
         boolean validated = validate(this.mediaFormat);
         if (!validated) {
-            Log.d(LOG_TAG, "file " + file.getName() + " failed validation");
+            Log.d(LOG_TAG, "file " + file.getName() + " failed validation: " + errorMsg);
             return false;
         }
 
@@ -98,20 +98,25 @@ public class PFSeqClip {
         }
 
         // bit depth
-        if (mediaFormat.containsKey(MediaFormat.KEY_PCM_ENCODING)) {
-            if ((mediaFormat.getInteger(MediaFormat.KEY_PCM_ENCODING) != AudioFormat.ENCODING_PCM_16BIT)) {
-                this.errorMsg = "file " + this.file.getName() + " bit depth is not 16. only bit depths of 16 are supported";
-                return false;
-            }
-        } else {
-            if (mediaFormat.containsKey("bits-per-sample")) {
-                if ((mediaFormat.getInteger("bits-per-sample") != 16)) {
+        String mime = mediaFormat.getString(MediaFormat.KEY_MIME);
+        // if flac or wav
+        if (mediaFormat.containsKey(MediaFormat.KEY_MIME)
+                && ( mime.equalsIgnoreCase("audio/raw") || mime.equalsIgnoreCase("audio/flac") ) ) {
+            if (mediaFormat.containsKey(MediaFormat.KEY_PCM_ENCODING)) {
+                if ((mediaFormat.getInteger(MediaFormat.KEY_PCM_ENCODING) != AudioFormat.ENCODING_PCM_16BIT)) {
                     this.errorMsg = "file " + this.file.getName() + " bit depth is not 16. only bit depths of 16 are supported";
                     return false;
                 }
             } else {
-                this.errorMsg = "file " + this.file.getName() + " unknown bit depth";
-                return false;
+                if (mediaFormat.containsKey("bits-per-sample")) {
+                    if ((mediaFormat.getInteger("bits-per-sample") != 16)) {
+                        this.errorMsg = "file " + this.file.getName() + " bit depth is not 16. only bit depths of 16 are supported";
+                        return false;
+                    }
+                } else {
+                    this.errorMsg = "file " + this.file.getName() + " unknown bit depth";
+                    return false;
+                }
             }
         }
 

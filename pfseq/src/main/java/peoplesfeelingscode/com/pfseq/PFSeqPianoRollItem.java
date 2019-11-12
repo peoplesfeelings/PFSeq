@@ -12,7 +12,7 @@ public class PFSeqPianoRollItem {
 
     public PFSeqPianoRollItem(PFSeq seq, PFSeqClip clip, String name, PFSeqTimeOffset timeOffset) {
         this.seq = seq;
-        this.clip = clip;
+        setClip(clip);
         this.name = name;
         this.timeOffset = timeOffset;
         enabled = true;
@@ -62,6 +62,9 @@ public class PFSeqPianoRollItem {
     }
     public void setClip(PFSeqClip clip) {
         this.clip = clip;
+        if (!clip.isLoadedSuccessfully()) {
+            setEnabled(false);
+        }
     }
     public PFSeqTimeOffset getTimeOffset() {
         return timeOffset;
