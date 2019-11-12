@@ -416,7 +416,9 @@ public abstract class PFSeq extends Service {
                                 PFSeqPianoRollItem nextPRItem = track.nextPianoRollItemAfter(soonestWritableNano);
                                 if (nextPRItem == null) {
                                     if (isPlaying()) {
-                                        // config is set to non-repeating and no more items. write silence
+                                        // nextPianoRollItemAfter returned null. write silence
+                                        // maybe config is set to non-repeating and no more items.
+                                        // maybe user called setClip on a pianoroll item, assigning it a clip that didn't load successfully
                                         Log.d(LOG_TAG, "posting write - silence only: " + (nanoWeWantWrittenUntil - soonestWritableNano) + " ns. nextPRItem is null");
                                         writeSilenceToTrack(track, nanoWeWantWrittenUntil - soonestWritableNano);
                                     } else {
@@ -424,6 +426,7 @@ public abstract class PFSeq extends Service {
                                         break outerloop;
                                     }
                                 } else {
+                                    Log.d(LOG_TAG, "nextPRItem: " + nextPRItem.getName());
                                     long nextPRItemNano = nextPRItem.soonestNanoAfter(soonestWritableNano);
 
                                     if (nextPRItemNano > nanoWeWantWrittenUntil) {

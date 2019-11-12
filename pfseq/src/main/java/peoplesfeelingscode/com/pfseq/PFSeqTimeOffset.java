@@ -4,6 +4,7 @@ package peoplesfeelingscode.com.pfseq;
 Time position relative to beginning of musical bar.
 Fractional position corresponds to a "piano roll" user interface that looks like this:
 
+
         beginning of bar                                end of bar
         |                                               |
         beginning of 1st beat   beginning of 2nd beat   |
@@ -14,12 +15,34 @@ Fractional position corresponds to a "piano roll" user interface that looks like
         |     |     |     |     |     |     |     |     |
         -------------------------------------------------
 
+        assuming 2 beats per bar (time signature numerals can be set in the config)
+
+        "Pos" in the above grid would be defined like this:
         beatOfBar: 1
         mode: MODE_FRACTIONAL
         binaryDivisions: 4
         binaryPos: 3
         isTriplet: false
 
+
+a grid with triplets might look like this:
+
+       beginning of bar                                                        end of bar
+       |                                                                       |
+       beginning of 1st beat               beginning of 2nd beat               |
+       |                                   |                                   |
+       -------------------------------------------------------------------------
+       |  :  :  |  :  :  |  :  :  |  :  :  |  :  :  |  :  :  |  :  :  |  :  :  |
+       |  :  :  |  :  :  |  :  :  |  : Pos |  :  :  |  :  :  |  :  :  |  :  :  |
+       |  :  :  |  :  :  |  :  :  |  :  :  |  :  :  |  :  :  |  :  :  |  :  :  |
+       -------------------------------------------------------------------------
+
+        beatOfBar: 0
+        mode: MODE_FRACTIONAL
+        binaryDivisions: 4
+        binaryPos: 3
+        isTriplet: true
+        tripletPos: 2
  */
 
 public class PFSeqTimeOffset {
@@ -48,7 +71,6 @@ public class PFSeqTimeOffset {
         this.isTriplet = isTriplet;
         this.tripletPos = tripletPos;
     }
-
     public static PFSeqTimeOffset make(int beatOfBar, int mode, double percentPos, int binaryDivisions, int binaryPos, boolean isTriplet, int tripletPos) {
         if (mode == PFSeqTimeOffset.MODE_FRACTIONAL) {
             if ( !(binaryDivisions == 1 || binaryDivisions % 2 == 0 )
@@ -71,14 +93,6 @@ public class PFSeqTimeOffset {
         return timeOffset;
     }
 
-    public int getBeatOfBar() {
-        return beatOfBar;
-    }
-
-    public int getMode() {
-        return mode;
-    }
-
     /*
     get the time position as a percent (of the duration of the beat)
      */
@@ -98,18 +112,19 @@ public class PFSeqTimeOffset {
     public int getBinaryDivisions() {
         return binaryDivisions;
     }
-
     public int getBinaryPos() {
         return binaryPos;
     }
-
     public boolean isTriplet() {
         return isTriplet;
     }
-
     public int getTripletPos() {
         return tripletPos;
     }
-
-
+    public int getBeatOfBar() {
+        return beatOfBar;
+    }
+    public int getMode() {
+        return mode;
+    }
 }

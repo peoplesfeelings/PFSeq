@@ -139,7 +139,8 @@ public class MainActivity extends PFSeqActivity {
             audFile = File.createTempFile("demo_app_file", "");
 //            InputStream ins = getResources().openRawResource(R.raw.guitar_hit_5);
 //            InputStream ins = getResources().openRawResource(R.raw.guitar_hit_1_flac);
-            InputStream ins = getResources().openRawResource(R.raw.guitr_hit_1_cbr_mp3);
+//            InputStream ins = getResources().openRawResource(R.raw.guitr_hit_1_cbr_mp3);
+            InputStream ins = getResources().openRawResource(R.raw.tone_mono_cbr_mp3);
 //            InputStream ins = getResources().openRawResource(R.raw.dewip_16bit_stereo_smoother);
             OutputStream out = new FileOutputStream(audFile);
 

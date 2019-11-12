@@ -228,13 +228,11 @@ public class PFSeqTrack {
         return transferCountShorts;
     }
     public void addPianoRollItem (PFSeqPianoRollItem item) {
-        boolean clipLoaded = item.getClip().isLoadedSuccessfully();
-        if (!clipLoaded) {
+        if (!item.getClip().isLoadedSuccessfully()) {
             getSeq().sendMessageToActivity(new PFSeqMessage(MESSAGE_TYPE_ERROR, "could not add clip to pianoroll. " + item.getClip().getErrorMsg()));
+        } else {
+            pianoRoll.add(item);
         }
-
-        pianoRoll.add(item);
-//        Collections.sort(pianoRoll);
     }
     public PFSeqPianoRollItem nextPianoRollItemAfter(long nano) {
         // may return null if pfseq no longer playing or in non-repeating mode and no more items
@@ -249,6 +247,9 @@ public class PFSeqTrack {
         long thisItemNextNano;
         for (PFSeqPianoRollItem item : pianoRoll) {
             if (!item.isEnabled()) {
+                continue;
+            }
+            if (!item.getClip().isLoadedSuccessfully()) {
                 continue;
             }
             thisItemNextNano = item.soonestNanoAfter(nano);

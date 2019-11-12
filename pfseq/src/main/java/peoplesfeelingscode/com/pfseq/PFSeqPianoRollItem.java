@@ -1,5 +1,8 @@
 package peoplesfeelingscode.com.pfseq;
 
+import android.util.Log;
+
+import static peoplesfeelingscode.com.pfseq.PFSeq.LOG_TAG;
 import static peoplesfeelingscode.com.pfseq.PFSeqConfig.REPEATING;
 import static peoplesfeelingscode.com.pfseq.PFSeqConfig.TIME_SIG_UPPER;
 
@@ -15,7 +18,6 @@ public class PFSeqPianoRollItem {
         setClip(clip);
         this.name = name;
         this.timeOffset = timeOffset;
-        enabled = true;
     }
 
     public long soonestNanoAfter(long nano) {
@@ -62,7 +64,10 @@ public class PFSeqPianoRollItem {
     }
     public void setClip(PFSeqClip clip) {
         this.clip = clip;
-        if (!clip.isLoadedSuccessfully()) {
+        if (clip.isLoadedSuccessfully()) {
+            setEnabled(true);
+        } else {
+            Log.d(LOG_TAG, "clip not loaded successfully. pr item disabled");
             setEnabled(false);
         }
     }
