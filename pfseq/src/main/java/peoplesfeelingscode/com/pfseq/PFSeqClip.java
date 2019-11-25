@@ -34,6 +34,7 @@ public class PFSeqClip {
 
         if (!file.exists() || file.isDirectory()) {
             Log.d(LOG_TAG, "failed to load clip");
+            this.errorMsg = "file not found";
             return false;
         }
 

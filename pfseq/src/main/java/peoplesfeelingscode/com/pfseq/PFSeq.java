@@ -39,7 +39,7 @@ import static peoplesfeelingscode.com.pfseq.PFSeqMessage.MESSAGE_TYPE_ALERT;
 import static peoplesfeelingscode.com.pfseq.PFSeqMessage.MESSAGE_TYPE_ERROR;
 
 public abstract class PFSeq extends Service {
-    public static final String LOG_TAG = "**pfseq**";
+    public static final String LOG_TAG = "**pf seq**";
     static final String CONTROL_THREAD_NAME = "control thread";
     static final String LOG_EOL = "\n";
     static final double NANO_PER_SECOND = 1000000000.0;

@@ -23,6 +23,7 @@ import static peoplesfeelingscode.com.pfseq.PFSeqConfig.MIN_MILLIS_AHEAD_TO_WRIT
 import static peoplesfeelingscode.com.pfseq.PFSeqConfig.SAMPLE_RATE;
 import static peoplesfeelingscode.com.pfseq.PFSeqConfig.SYNC_MARGIN_MILLIS;
 import static peoplesfeelingscode.com.pfseq.PFSeqConfig.TIMESTAMP_POLLING_DELAY_MILLIS;
+import static peoplesfeelingscode.com.pfseq.PFSeqMessage.MESSAGE_TYPE_ALERT;
 import static peoplesfeelingscode.com.pfseq.PFSeqMessage.MESSAGE_TYPE_ERROR;
 
 public class PFSeqTrack {
@@ -229,10 +230,9 @@ public class PFSeqTrack {
     }
     public void addPianoRollItem (PFSeqPianoRollItem item) {
         if (!item.getClip().isLoadedSuccessfully()) {
-            getSeq().sendMessageToActivity(new PFSeqMessage(MESSAGE_TYPE_ERROR, "could not add clip to pianoroll. " + item.getClip().getErrorMsg()));
-        } else {
-            pianoRoll.add(item);
+            getSeq().sendMessageToActivity(new PFSeqMessage(MESSAGE_TYPE_ALERT, "clip not loaded successfully. pr item disabled. " + item.getClip().getFile().getName() + " - " + item.getClip().getErrorMsg()));
         }
+        pianoRoll.add(item);
     }
     public PFSeqPianoRollItem nextPianoRollItemAfter(long nano) {
         // may return null if pfseq no longer playing or in non-repeating mode and no more items
