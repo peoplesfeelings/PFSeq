@@ -1,10 +1,8 @@
 package peoplesfeelingscode.com.pfseq;
 
-import android.util.Log;
-
-import static peoplesfeelingscode.com.pfseq.PFSeq.LOG_TAG;
 import static peoplesfeelingscode.com.pfseq.PFSeqConfig.REPEATING;
 import static peoplesfeelingscode.com.pfseq.PFSeqConfig.TIME_SIG_UPPER;
+import static peoplesfeelingscode.com.pfseq.PFSeqMessage.MESSAGE_TYPE_ALERT;
 
 public class PFSeqPianoRollItem {
     private boolean enabled;
@@ -64,10 +62,8 @@ public class PFSeqPianoRollItem {
     }
     public void setClip(PFSeqClip clip) {
         this.clip = clip;
-        if (clip.isLoadedSuccessfully()) {
-            setEnabled(true);
-        } else {
-            Log.d(LOG_TAG, "clip not loaded successfully. pr item disabled");
+        if (!clip.isLoadedSuccessfully()) {
+            seq.sendMessageToActivity(new PFSeqMessage(MESSAGE_TYPE_ALERT, "clip not loaded successfully. pr item disabled"));
             setEnabled(false);
         }
     }

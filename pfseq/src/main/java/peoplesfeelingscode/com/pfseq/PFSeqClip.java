@@ -144,19 +144,20 @@ public class PFSeqClip {
         return true;
     }
 
+    // accessors
     public MediaFormat getMediaFormat() {
         return mediaFormat;
     }
-
     public short[] getPcm() {
         return pcm;
     }
-
     public boolean isLoadedSuccessfully() {
         return loadedSuccessfully;
     }
-
     public String getErrorMsg() {
         return errorMsg;
+    }
+    public File getFile() {
+        return file;
     }
 }
