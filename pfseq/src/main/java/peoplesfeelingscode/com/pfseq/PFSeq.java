@@ -162,7 +162,7 @@ public abstract class PFSeq extends Service {
                 startForeground(getConfig().getInt(ONGOING_NOTIF_ID), notification);
                 Log.d(LOG_TAG, "started foreground");
             } catch (Exception e) {
-                sendMessageToActivity(new PFSeqMessage(MESSAGE_TYPE_ERROR, "Failed to run service in foreground"));
+                sendMessageToActivity(new PFSeqMessage(MESSAGE_TYPE_ERROR, "Failed to run service in foreground. msg:" + e.getMessage()));
             }
         }
 

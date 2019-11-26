@@ -20,7 +20,7 @@ public class PFSeqAudio {
         try {
             extractor.setDataSource(file.getAbsolutePath());
         } catch (IOException e) {
-            throw new Exception("Error: exception thrown when trying to extract data from file " + file.getName());
+            throw new Exception("Error: exception thrown when trying to extract data from file " + file.getName() + ": " + e.getMessage());
         }
 
         format = extractor.getTrackFormat(0);
@@ -40,7 +40,7 @@ public class PFSeqAudio {
         try {
             extractor.setDataSource(file.getAbsolutePath());
         } catch (IOException e) {
-            throw new Exception("Error: exception thrown when trying to extract data from file " + file.getName());
+            throw new Exception("Error: exception thrown when trying to extract data from file " + file.getName() + ": " + e.getMessage());
         }
 
         sourceFormat = extractor.getTrackFormat(0);
