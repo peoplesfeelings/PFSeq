@@ -277,7 +277,7 @@ public class PFSeqTrack {
         // don't call if isPlaying(), nanoIsMapped(), or isWriteLocked() is true
 
         if (!isPlaying()) {
-            getSeq().stopSelf( TRACK_LOG_PREFIX + "soonestWritableNanotime() should not be called if track not playing");
+            Log.d(LOG_TAG, "soonestWritableNanotime() should not be called if track not playing");
             return -1;
         }
         if (!nanoIsMapped()) {
