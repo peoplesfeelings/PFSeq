@@ -102,7 +102,7 @@ public class PFSeqTimeOffset {
         } else {
             double theReturn = ((double) getBinaryPos()) / getBinaryDivisions();
             if (isTriplet()) {
-                return theReturn + ( 1 / getBinaryDivisions() / 3 * getTripletPos() );
+                return theReturn + ( 1 / ((double) getBinaryDivisions()) / 3 * ((double) getTripletPos()) );
             } else {
                 return theReturn;
             }
