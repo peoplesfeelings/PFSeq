@@ -12,13 +12,12 @@ FADE_LENGTH_FRAMES - this is just meant to prevent clipping, when audio clips ar
     taste. making it too large could cause errors on some devices
 FRAMES_TO_LEAVE_BEFORE_NEXT_ITEM - you want this as low as possible without having a second PR item get
     skipped because the first PR item wrote slightly past the nanotime at which the second item would
-    have been seen to have been able to start at, in the scenario in which the first item abuts against
-    the second item
+    have been seen to start at, in the scenario in which the first item abuts against the second item
 MAX_CLIP_FRAMES - for memory reasons we can't allow extremely long audio clips. the audio data is
     manipulated in the content-writing loop and it's hard to test on all devices so I'm starting this
     low (10 s) but ultimately we want it to approach an hour.
-MIN_MILLIS_AHEAD_TO_WRITE - it's min because you can right a little further out, like if the sample
-    extends beyond that poiint in time. this is how far into the future we want to keep the AudioTrack's
+MIN_MILLIS_AHEAD_TO_WRITE - it's min because you can write a little further out, like if the sample
+    extends beyond that point in time. this is how far into the future we want to keep the AudioTrack's
     buffer written for.
 MIN_WRITABLE_CONTENT_NANO - when calling nextPianoRollItemAfter() to get the itemAfterNext, we need to
     pass it a nanotime that is slightly later than the nano start time of the earlier item.
@@ -53,8 +52,6 @@ import static peoplesfeelingscode.com.pfseq.PFSeq.MILLIS_PER_SECOND;
 public class PFSeqConfig implements Serializable {
     private static final String KEY_NOT_FOUND = "key not found - ";
 
-    private boolean isValid;
-
     // keys
     public static final String BUFFER_SIZE_BYTES = "buffer_size_bites";
     public static final String CONTROL_THREAD_POLLING_MILLIS = "control_thread_polling_millis";
@@ -79,6 +76,7 @@ public class PFSeqConfig implements Serializable {
     public static final String TIME_SIG_UPPER = "starting_time_sig_upper_numeral";
     public static final String TIMESTAMP_POLLING_DELAY_MILLIS = "timestamp_polling_delay_millis";
 
+    private boolean isValid;
     // default config values
     public static final HashMap<String, Integer> INT_DEFAULTS = new HashMap<String, Integer>() {{
         put(BUFFER_SIZE_BYTES, 100000);

@@ -560,7 +560,7 @@ public abstract class PFSeq extends Service {
 
         this.bpm = new BigDecimal(newBpm);
 
-        // adjust scale to taste
+        // adjust to taste
         this.nanosecondsPerBeat = NANOSECONDS_PER_MINUTE.divide(getBpm(), 10, BigDecimal.ROUND_HALF_DOWN);
         /*
         *       used by:
@@ -576,6 +576,15 @@ public abstract class PFSeq extends Service {
         final short[] silence = track.makeSilence(nanoToFrames(silenceNano));
 //        Log.d(LOG_TAG, "posting write - silence only: " + silenceNano + " ns");
         track.postWrite(silence, true);
+    }
+    public boolean unSetUpSequencer() {
+        stop();
+
+        isSetUp.set(false);
+        _config = null;
+
+        Log.d(LOG_TAG, "unsetup");
+        return true;
     }
 
     // track stuff
@@ -646,7 +655,7 @@ public abstract class PFSeq extends Service {
         }
 
         BigDecimal elapsedNanotime = new BigDecimal(nano - tempoStartNanotime.longValue());
-        /* adjust scale to taste */
+        /* adjust to taste */
         BigDecimal beatsElapsed = elapsedNanotime.divide(nanosecondsPerBeat, 0, BigDecimal.ROUND_DOWN);
 
         /*
@@ -687,7 +696,7 @@ public abstract class PFSeq extends Service {
             return -1;
         }
 
-        // adjust precision to taste
+        // adjust to taste
         return (int) ( durationNano / NANO_PER_SECOND * getConfig().getInt(SAMPLE_RATE));
     }
     public int millisToFrames(int durationMillis) {
@@ -696,7 +705,7 @@ public abstract class PFSeq extends Service {
             return -1;
         }
 
-        // adjust precision to taste
+        // adjust to taste
         return (int) ( durationMillis / MILLIS_PER_SECOND * getConfig().getInt(SAMPLE_RATE));
     }
     public int framesToMillis(int frames) {
@@ -705,7 +714,7 @@ public abstract class PFSeq extends Service {
             return -1;
         }
 
-        // adjust precision to taste
+        // adjust to taste
         double framesPerMillis = (getConfig().getInt(SAMPLE_RATE) / MILLIS_PER_SECOND);
         return (int) (frames / framesPerMillis);
     }
@@ -715,7 +724,7 @@ public abstract class PFSeq extends Service {
             return -1;
         }
 
-        // adjust precision to taste
+        // adjust to taste
         double framesPerNano = (getConfig().getInt(SAMPLE_RATE) / NANO_PER_SECOND);
         return (long) (frames / framesPerNano);
     }

@@ -9,6 +9,8 @@ For audio tools like drum machines, samplers, metronomes, etc.
  - able to change audio content while playing
  - able to define time position of audio clips relative to beats and bars, consistent with musical notation
  - content can be provided as looping or non-looping
+ - runs in service (able to run in background)
+ - error info sent to activity from service
  - module easily includable in an android app
  
 #### Precision is achieved by:
