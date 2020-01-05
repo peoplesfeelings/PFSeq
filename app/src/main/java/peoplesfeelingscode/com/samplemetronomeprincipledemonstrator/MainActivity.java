@@ -66,7 +66,7 @@ public class MainActivity extends PFSeqActivity {
         beatMakerBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //
+                startActivity(new Intent(MainActivity.this, BeatMakerActivity.class));
             }
         });
     }

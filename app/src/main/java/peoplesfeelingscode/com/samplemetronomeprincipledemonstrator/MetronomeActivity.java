@@ -25,6 +25,7 @@ import peoplesfeelingscode.com.pfseq.PFSeqTimeOffset;
 import peoplesfeelingscode.com.pfseq.PFSeqTrack;
 
 import static peoplesfeelingscode.com.pfseq.PFSeq.LOG_TAG;
+import static peoplesfeelingscode.com.pfseq.PFSeqConfig.ID;
 import static peoplesfeelingscode.com.pfseq.PFSeqConfig.ONGOING_NOTIF_ID;
 import static peoplesfeelingscode.com.pfseq.PFSeqConfig.TIME_SIG_LOWER;
 import static peoplesfeelingscode.com.pfseq.PFSeqConfig.TIME_SIG_UPPER;
@@ -34,6 +35,8 @@ import static peoplesfeelingscode.com.pfseq.PFSeqMessage.MESSAGE_TYPE_ALERT;
 import static peoplesfeelingscode.com.pfseq.PFSeqMessage.MESSAGE_TYPE_ERROR;
 
 public class MetronomeActivity extends PFSeqActivity {
+    final String CONFIG_ID = "metronome";
+
     Button playbtn;
     Button stopbtn;
     Button mainBtn;
@@ -57,7 +60,15 @@ public class MetronomeActivity extends PFSeqActivity {
 
     @Override
     public void onConnect() {
-        if (!getSeq().isSetUp()) {
+        if (getSeq().isSetUp()) {
+            if (!getSeq().getConfig().getString(ID).equals(CONFIG_ID)) {
+                getSeq().unSetUpSequencer();
+                boolean success = configureSequecer(getSeq());
+                if (success) {
+                    setUpTracks(getSeq());
+                }
+            }
+        } else {
             boolean success = configureSequecer(getSeq());
             if (success) {
                 setUpTracks(getSeq());
@@ -129,14 +140,16 @@ public class MetronomeActivity extends PFSeqActivity {
 //            put(RUN_IN_FOREGROUND, false);
 //            put(REPEATING, false);
         }};
-
         HashMap<String, Integer> myConfigInts = new HashMap<String, Integer>() {{
             put(ONGOING_NOTIF_ID, 4346);
             put(TIME_SIG_UPPER, 1);
             put(TIME_SIG_LOWER, 4);
         }};
+        HashMap<String, String> myConfigStrings = new HashMap<String, String>() {{
+            put(ID, CONFIG_ID);
+        }};
 
-        PFSeqConfig exampleConfig = new PFSeqConfig(myConfigInts, myConfigBools, null, null);
+        PFSeqConfig exampleConfig = new PFSeqConfig(myConfigInts, myConfigBools, null, myConfigStrings);
 
         boolean seqSetupSuccess = seq.setUpSequencer(exampleConfig);
 

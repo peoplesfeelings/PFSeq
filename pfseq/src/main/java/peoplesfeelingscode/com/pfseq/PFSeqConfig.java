@@ -12,7 +12,8 @@ FADE_LENGTH_FRAMES - this is just meant to prevent clipping, when audio clips ar
     taste. making it too large could cause errors on some devices
 FRAMES_TO_LEAVE_BEFORE_NEXT_ITEM - you want this as low as possible without having a second PR item get
     skipped because the first PR item wrote slightly past the nanotime at which the second item would
-    have been seen to start at, in the scenario in which the first item abuts against the second item
+    have been seen to start at, in the scenario in which the first item abuts against the second item.
+ID - this is so you can identify which config you have loaded, if your app allows multiple.
 MAX_CLIP_FRAMES - for memory reasons we can't allow extremely long audio clips. the audio data is
     manipulated in the content-writing loop and it's hard to test on all devices so I'm starting this
     low (10 s) but ultimately we want it to approach an hour.
@@ -57,6 +58,7 @@ public class PFSeqConfig implements Serializable {
     public static final String CONTROL_THREAD_POLLING_MILLIS = "control_thread_polling_millis";
     public static final String FADE_LENGTH_FRAMES = "fade_length_frames";
     public static final String FRAMES_TO_LEAVE_BEFORE_NEXT_ITEM = "frames_to_leave_before_next_item";
+    public static final String ID = "id";
     public static final String MAX_BPM = "max_bpm";
     public static final String MAX_CLIP_FRAMES = "max_clip_frames";
     public static final String MAX_TRACKS = "max_tracks";
@@ -85,7 +87,7 @@ public class PFSeqConfig implements Serializable {
         put(FRAMES_TO_LEAVE_BEFORE_NEXT_ITEM, 100);
         put(MAX_BPM, 1000);
         put(MAX_CLIP_FRAMES, 441000);
-        put(MAX_TRACKS, 1);
+        put(MAX_TRACKS, 4);
         put(MIN_BPM, 15);
         put(MIN_MILLIS_AHEAD_TO_WRITE, 400);
         put(MIN_WRITABLE_CONTENT_NANO, 5000);
@@ -107,7 +109,7 @@ public class PFSeqConfig implements Serializable {
         put(TEMPO, 120.0);
     }};
     public static final HashMap<String, String> STRING_DEFAULTS = new HashMap<String, String>() {{
-        //
+        put(ID, "");
     }};
 
     private HashMap<String, Integer> _ints;
