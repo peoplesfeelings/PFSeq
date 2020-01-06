@@ -150,27 +150,25 @@ public class BeatMakerActivity extends PFSeqActivity {
             return false;
         }
 
-        PFSeqTrack trackA = new PFSeqTrack(seq, "track a");
         PFSeqClip clipA1 = new PFSeqClip(seq, audFile1);
+        PFSeqClip clipB1 = new PFSeqClip(seq, audFile2);
+
+        PFSeqTrack trackA = new PFSeqTrack(seq, "track a");
 
         PFSeqTimeOffset timeOffsetA1 = PFSeqTimeOffset.make(0, PFSeqTimeOffset.MODE_FRACTIONAL, 0, 4, 0,false, 0);
         PFSeqPianoRollItem itemA1 = new PFSeqPianoRollItem(seq, clipA1, "item a1", timeOffsetA1);
-        itemA1.setEnabled(true);
         trackA.addPianoRollItem(itemA1);
 
         seq.addTrack(trackA);
 
         PFSeqTrack trackB = new PFSeqTrack(seq, "track b");
-        PFSeqClip clipB1 = new PFSeqClip(seq, audFile2);
 
         PFSeqTimeOffset timeOffsetB1 = PFSeqTimeOffset.make(0, PFSeqTimeOffset.MODE_FRACTIONAL, 0, 4, 1,false, 0);
         PFSeqPianoRollItem itemB1 = new PFSeqPianoRollItem(seq, clipB1, "item b1", timeOffsetB1);
-        itemB1.setEnabled(true);
         trackB.addPianoRollItem(itemB1);
 
         PFSeqTimeOffset timeOffsetB2  = PFSeqTimeOffset.make(0, PFSeqTimeOffset.MODE_FRACTIONAL, 0, 4, 2, false, 0);
         PFSeqPianoRollItem itemB2 = new PFSeqPianoRollItem(seq, clipB1, "item b2", timeOffsetB2);
-        itemB2.setEnabled(true);
         trackB.addPianoRollItem(itemB2);
 
         seq.addTrack(trackB);

@@ -187,20 +187,7 @@ public class MetronomeActivity extends PFSeqActivity {
 
         timeOffset = PFSeqTimeOffset.make(0, PFSeqTimeOffset.MODE_FRACTIONAL, 0, 4, 0,false, 0);
         PFSeqPianoRollItem item1 = new PFSeqPianoRollItem(seq, clip, "item 1", timeOffset);
-        item1.setEnabled(true);
         metronomeTrack.addPianoRollItem(item1);
-
-//        timeOffset = PFSeqTimeOffset.make(0, PFSeqTimeOffset.MODE_FRACTIONAL, 0, 4, 1, false, 0);
-//        PFSeqPianoRollItem item2 = new PFSeqPianoRollItem(seq, clip, "item 2", timeOffset);
-//        metronomeTrack.addPianoRollItem(item2);
-//
-//        timeOffset = PFSeqTimeOffset.make(0, PFSeqTimeOffset.MODE_FRACTIONAL, 0, 4, 2, false, 0);
-//        PFSeqPianoRollItem item3 = new PFSeqPianoRollItem(seq, clip, "item 3", timeOffset);
-//        metronomeTrack.addPianoRollItem(item3);
-//
-//        timeOffset = PFSeqTimeOffset.make(0, PFSeqTimeOffset.MODE_FRACTIONAL, 0, 4, 3, false, 0);
-//        PFSeqPianoRollItem item4 = new PFSeqPianoRollItem(seq, clip, "item 4", timeOffset);
-//        metronomeTrack.addPianoRollItem(item4);
 
         seq.addTrack(metronomeTrack);
 

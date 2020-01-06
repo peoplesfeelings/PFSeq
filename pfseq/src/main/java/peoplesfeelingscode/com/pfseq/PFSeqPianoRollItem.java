@@ -13,9 +13,10 @@ public class PFSeqPianoRollItem {
 
     public PFSeqPianoRollItem(PFSeq seq, PFSeqClip clip, String name, PFSeqTimeOffset timeOffset) {
         this.seq = seq;
-        setClip(clip);
         this.name = name;
         this.timeOffset = timeOffset;
+        this.enabled = true;
+        setClip(clip);
     }
 
     public long soonestNanoAfter(long nano) {
