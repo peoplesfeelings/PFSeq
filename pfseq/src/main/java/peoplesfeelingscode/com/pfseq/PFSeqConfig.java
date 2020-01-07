@@ -31,7 +31,8 @@ SYNC_MARGIN_MILLIS - how far before MIN_MILLIS_AHEAD_TO_WRITE is it ok for the b
 SYNC_POLLING_SLEEP_MILLIS - used in syncTracks runnable to throttle the while loop
 SYNC_TIME_OUT_MILLIS - used in syncTracks runnable to exit runnable and send error to activity if syncing
     does not complete in the specified time
-TIME_SIG_LOWER - note value that represents one beat. binary sequence numbers. 4 is quarter note
+TIME_SIG_LOWER - note value that represents one beat. binary sequence numbers. 4 is quarter note.
+    not necessarily used.
 TIME_SIG_UPPER - how many beats constitute a bar
 TIMESTAMP_POLLING_DELAY_MILLIS - how frequently to check if the AudioTimestamp has been returned
     from the native layer. this is also how frequently to write silence, while waiting for nano to be mapped.

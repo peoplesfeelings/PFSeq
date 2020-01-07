@@ -16,6 +16,7 @@ import peoplesfeelingscode.com.pfseq.PFSeq;
 import peoplesfeelingscode.com.pfseq.PFSeqActivity;
 import peoplesfeelingscode.com.pfseq.PFSeqClip;
 import peoplesfeelingscode.com.pfseq.PFSeqConfig;
+import peoplesfeelingscode.com.pfseq.PFSeqLength;
 import peoplesfeelingscode.com.pfseq.PFSeqMessage;
 import peoplesfeelingscode.com.pfseq.PFSeqPianoRollItem;
 import peoplesfeelingscode.com.pfseq.PFSeqTimeOffset;
@@ -23,8 +24,8 @@ import peoplesfeelingscode.com.pfseq.PFSeqTrack;
 
 import static peoplesfeelingscode.com.pfseq.PFSeqConfig.ID;
 import static peoplesfeelingscode.com.pfseq.PFSeqConfig.ONGOING_NOTIF_ID;
-import static peoplesfeelingscode.com.pfseq.PFSeqConfig.TIME_SIG_LOWER;
 import static peoplesfeelingscode.com.pfseq.PFSeqConfig.TIME_SIG_UPPER;
+import static peoplesfeelingscode.com.pfseq.PFSeqLength.MODE_FRACTIONAL;
 import static peoplesfeelingscode.com.pfseq.PFSeqMessage.MESSAGE_TYPE_ALERT;
 import static peoplesfeelingscode.com.pfseq.PFSeqMessage.MESSAGE_TYPE_ERROR;
 
@@ -103,8 +104,7 @@ public class BeatMakerActivity extends PFSeqActivity {
         }};
         HashMap<String, Integer> myConfigInts = new HashMap<String, Integer>() {{
             put(ONGOING_NOTIF_ID, 4346);
-            put(TIME_SIG_UPPER, 1);
-            put(TIME_SIG_LOWER, 4);
+            put(TIME_SIG_UPPER, 2);
         }};
         HashMap<String, String> myConfigStrings = new HashMap<String, String>() {{
             put(ID, CONFIG_ID);
@@ -128,6 +128,7 @@ public class BeatMakerActivity extends PFSeqActivity {
         try {
             audFile1 = File.createTempFile("demo_app_file", "");
             InputStream ins = getResources().openRawResource(R.raw.guitar_hit_5);
+//            InputStream ins = getResources().openRawResource(R.raw.dewip_16bit_stereo_smoother);
             OutputStream out = new FileOutputStream(audFile1);
 
             byte[] buffer = new byte[1024];
@@ -137,8 +138,8 @@ public class BeatMakerActivity extends PFSeqActivity {
             }
 
             audFile2 = File.createTempFile("demo_app_file", "");
-            ins = getResources().openRawResource(R.raw.guitar_hit_1_flac);
-//            ins = getResources().openRawResource(R.raw.dewip_16bit_stereo_smoother);
+//            ins = getResources().openRawResource(R.raw.guitar_hit_1_flac);
+            ins = getResources().openRawResource(R.raw.dewip_16bit_stereo_smoother);
             out = new FileOutputStream(audFile2);
 
             buffer = new byte[1024];
@@ -150,26 +151,42 @@ public class BeatMakerActivity extends PFSeqActivity {
             return false;
         }
 
-        PFSeqClip clipA1 = new PFSeqClip(seq, audFile1);
-        PFSeqClip clipB1 = new PFSeqClip(seq, audFile2);
+        PFSeqClip clip1 = new PFSeqClip(seq, audFile1);
+        PFSeqClip clip2 = new PFSeqClip(seq, audFile2);
+        PFSeqTimeOffset lengthOffset1 = PFSeqTimeOffset.make(0, PFSeqTimeOffset.MODE_FRACTIONAL, 0, 8, 1, false, 0);
+        PFSeqLength length1 = new PFSeqLength(getSeq(), MODE_FRACTIONAL, lengthOffset1, 0);
+        PFSeqTimeOffset lengthOffset2 = PFSeqTimeOffset.make(0, PFSeqTimeOffset.MODE_FRACTIONAL, 0, 8, 3, false, 0);
+        PFSeqLength length2 = new PFSeqLength(getSeq(), MODE_FRACTIONAL, lengthOffset2, 0);
 
         PFSeqTrack trackA = new PFSeqTrack(seq, "track a");
 
         PFSeqTimeOffset timeOffsetA1 = PFSeqTimeOffset.make(0, PFSeqTimeOffset.MODE_FRACTIONAL, 0, 4, 0,false, 0);
-        PFSeqPianoRollItem itemA1 = new PFSeqPianoRollItem(seq, clipA1, "item a1", timeOffsetA1);
+        PFSeqPianoRollItem itemA1 = new PFSeqPianoRollItem(seq, clip2, "item a1", timeOffsetA1, length2);
         trackA.addPianoRollItem(itemA1);
+
+        PFSeqTimeOffset timeOffsetA2 = PFSeqTimeOffset.make(0, PFSeqTimeOffset.MODE_FRACTIONAL, 0, 4, 1,false, 0);
+        PFSeqPianoRollItem itemA2 = new PFSeqPianoRollItem(seq, clip2, "item a2", timeOffsetA2, length2);
+        trackA.addPianoRollItem(itemA2);
+
+        PFSeqTimeOffset timeOffsetA3 = PFSeqTimeOffset.make(0, PFSeqTimeOffset.MODE_FRACTIONAL, 0, 4, 2,false, 0);
+        PFSeqPianoRollItem itemA3 = new PFSeqPianoRollItem(seq, clip2, "item a3", timeOffsetA3, length2);
+        trackA.addPianoRollItem(itemA3);
 
         seq.addTrack(trackA);
 
         PFSeqTrack trackB = new PFSeqTrack(seq, "track b");
 
-        PFSeqTimeOffset timeOffsetB1 = PFSeqTimeOffset.make(0, PFSeqTimeOffset.MODE_FRACTIONAL, 0, 4, 1,false, 0);
-        PFSeqPianoRollItem itemB1 = new PFSeqPianoRollItem(seq, clipB1, "item b1", timeOffsetB1);
+        PFSeqTimeOffset timeOffsetB1 = PFSeqTimeOffset.make(1, PFSeqTimeOffset.MODE_FRACTIONAL, 0, 4, 0,false, 0);
+        PFSeqPianoRollItem itemB1 = new PFSeqPianoRollItem(seq, clip2, "item b1", timeOffsetB1, length1);
         trackB.addPianoRollItem(itemB1);
 
-        PFSeqTimeOffset timeOffsetB2  = PFSeqTimeOffset.make(0, PFSeqTimeOffset.MODE_FRACTIONAL, 0, 4, 2, false, 0);
-        PFSeqPianoRollItem itemB2 = new PFSeqPianoRollItem(seq, clipB1, "item b2", timeOffsetB2);
+        PFSeqTimeOffset timeOffsetB2  = PFSeqTimeOffset.make(1, PFSeqTimeOffset.MODE_FRACTIONAL, 0, 4, 1, false, 0);
+        PFSeqPianoRollItem itemB2 = new PFSeqPianoRollItem(seq, clip2, "item b2", timeOffsetB2, length1);
         trackB.addPianoRollItem(itemB2);
+
+        PFSeqTimeOffset timeOffsetB3  = PFSeqTimeOffset.make(1, PFSeqTimeOffset.MODE_FRACTIONAL, 0, 4, 2, false, 0);
+        PFSeqPianoRollItem itemB3 = new PFSeqPianoRollItem(seq, clip2, "item b3", timeOffsetB3, length1);
+        trackB.addPianoRollItem(itemB3);
 
         seq.addTrack(trackB);
 

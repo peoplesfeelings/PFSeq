@@ -39,3 +39,8 @@ https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html
 
 ## Requirements
  - API level 24
+
+## Other features
+ - Includes decoder to get raw PCM data from encoded files such as MP3s
+ - Length of audio clips can be specified as absolute or relative to time grid
+ - Velocity of clips can be set

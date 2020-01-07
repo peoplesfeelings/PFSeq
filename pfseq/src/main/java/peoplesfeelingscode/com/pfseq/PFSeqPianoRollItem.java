@@ -9,16 +9,22 @@ public class PFSeqPianoRollItem {
     private PFSeq seq;
     private PFSeqClip clip;
     private String name;
-    private PFSeqTimeOffset timeOffset; // relative to begginning of bar
+    private PFSeqTimeOffset timeOffset; // time position, relative to begginning of bar
+    private PFSeqLength length; // length for clip to be abridged to, relative to
 
-    public PFSeqPianoRollItem(PFSeq seq, PFSeqClip clip, String name, PFSeqTimeOffset timeOffset) {
+    // length argument can be null, if you don't want to specify length
+    public PFSeqPianoRollItem(PFSeq seq, PFSeqClip clip, String name, PFSeqTimeOffset timeOffset, PFSeqLength length) {
         this.seq = seq;
         this.name = name;
         this.timeOffset = timeOffset;
+        this.length = length;
         this.enabled = true;
         setClip(clip);
     }
 
+    public short[] getPcm() {
+        return clip.getPcm();
+    }
     public long soonestNanoAfter(long nano) {
         // may return a nanotime that is not actually after, but before, if pfseq config is set to non-repeating
 
@@ -26,7 +32,7 @@ public class PFSeqPianoRollItem {
         int timeSigBeatsPerBar = seq.getConfig().getInt(TIME_SIG_UPPER);
         int beatsSinceTempoStart = seq.beatsSinceTempoStart(nano);
         long currentBeatNanotime = seq.beatStartNanotime(beatsSinceTempoStart);
-        int itemBeatOfBar = timeOffset.getBeatOfBar();
+        int itemBeatOfBar = timeOffset.getBeats();
         long offsetFromBeatNano = (long) ( timeOffset.getPercent() * nanosPerBeat );
 
         int currentBeatOfBar = -1;
@@ -80,4 +86,8 @@ public class PFSeqPianoRollItem {
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
     }
+    public PFSeqLength getLength() {
+        return length;
+    }
 }
+

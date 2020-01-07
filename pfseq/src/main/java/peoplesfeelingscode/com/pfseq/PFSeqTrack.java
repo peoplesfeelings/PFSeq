@@ -8,7 +8,6 @@ import android.os.Looper;
 import android.util.Log;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static android.media.AudioFormat.CHANNEL_OUT_STEREO;
@@ -17,14 +16,12 @@ import static android.media.AudioManager.STREAM_MUSIC;
 import static android.os.Process.THREAD_PRIORITY_URGENT_AUDIO;
 import static peoplesfeelingscode.com.pfseq.PFSeq.LOG_TAG;
 import static peoplesfeelingscode.com.pfseq.PFSeqConfig.BUFFER_SIZE_BYTES;
-import static peoplesfeelingscode.com.pfseq.PFSeqConfig.FADE_LENGTH_FRAMES;
 import static peoplesfeelingscode.com.pfseq.PFSeqConfig.FRAMES_TO_LEAVE_BEFORE_NEXT_ITEM;
 import static peoplesfeelingscode.com.pfseq.PFSeqConfig.MIN_MILLIS_AHEAD_TO_WRITE;
 import static peoplesfeelingscode.com.pfseq.PFSeqConfig.SAMPLE_RATE;
 import static peoplesfeelingscode.com.pfseq.PFSeqConfig.SYNC_MARGIN_MILLIS;
 import static peoplesfeelingscode.com.pfseq.PFSeqConfig.TIMESTAMP_POLLING_DELAY_MILLIS;
 import static peoplesfeelingscode.com.pfseq.PFSeqMessage.MESSAGE_TYPE_ALERT;
-import static peoplesfeelingscode.com.pfseq.PFSeqMessage.MESSAGE_TYPE_ERROR;
 
 public class PFSeqTrack {
     static final String WORK_THREAD_NAME = "PFSeq work thread";
@@ -76,7 +73,7 @@ public class PFSeqTrack {
 
         initialized = true;
         bufferSizeFrames = at.getBufferSizeInFrames();
-        bufferSizeBytes = bufferSizeFrames * bytesPerFrame();
+        bufferSizeBytes = bufferSizeFrames * seq.bytesPerFrame();
         Log.d(LOG_TAG, TRACK_LOG_PREFIX + "track initialized");
         Log.d(LOG_TAG, TRACK_LOG_PREFIX + "bufferSizeFrames: " + bufferSizeFrames);
         Log.d(LOG_TAG, TRACK_LOG_PREFIX + "bufferSizeBytes: " + bufferSizeBytes);
@@ -133,7 +130,7 @@ public class PFSeqTrack {
         }, workThreadHandler);
 
         // write preliminary block of silence and start
-        final short[] preliminarySilence = makeSilence(getSeq().nanoToFrames(getSeq().getConfig().getInt(MIN_MILLIS_AHEAD_TO_WRITE) * (int) PFSeq.NANO_PER_MILLIS));
+        final short[] preliminarySilence = seq.makeSilence(getSeq().nanoToFrames(getSeq().getConfig().getInt(MIN_MILLIS_AHEAD_TO_WRITE) * (int) PFSeq.NANO_PER_MILLIS));
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
@@ -174,7 +171,7 @@ public class PFSeqTrack {
         int silenceNeededBeforeStartFrames = seq.nanoToFrames(silenceNeededBeforeStartNano) - framesToLeaveBeforeNextItem;
         if (silenceNeededBeforeStartFrames >= 0) {
             // fill gap between last buffered data and content start time
-            postWrite(makeSilence(silenceNeededBeforeStartFrames),true);
+            postWrite(seq.makeSilence(silenceNeededBeforeStartFrames),true);
             Log.d(LOG_TAG, TRACK_LOG_PREFIX + "posted write - silence written up to content start time. " + silenceNeededBeforeStartNano / seq.NANO_PER_SECOND + " s of silence");
         }
 
@@ -191,7 +188,7 @@ public class PFSeqTrack {
             @Override
             public void run() {
                 otherWriteStart = System.currentTimeMillis();
-                int framesWritten = writeToAt(pcm, blocking) / 2;
+                writeToAt(pcm, blocking);
 //                Log.d(LOG_TAG, "wrote " + (pcm.length / 2)  + " frames - " + (blocking ? "blocking" : "not blocking") + " - frames written: " + framesWritten);
 //                Log.d(LOG_TAG, "time spent: " + (System.currentTimeMillis() - writeStart) + " ms" );
 //                Log.d(LOG_TAG, "other time spent: " + (System.currentTimeMillis() - otherWriteStart) + " ms" );
@@ -323,73 +320,6 @@ public class PFSeqTrack {
         return atStartNanotime;
     }
 
-    // audio stuff
-    public short[] makeSilence(int lengthFrames) {
-//        Log.d(LOG_TAG, "makeSilence() - lengthFrames: " + lengthFrames + " shortsPerFrame(): " + shortsPerFrame());
-        if (lengthFrames < 0) {
-            getSeq().stopSelf("negative frame length");
-        }
-
-        short[] shortArray = new short[lengthFrames * 2];
-
-        for (int i = 0; i < lengthFrames; i++) {
-            shortArray[i] = 0;
-        }
-
-        return shortArray;
-    }
-    public short[] abridge(short[] pcm, int newLengthFrames) {
-        int oldLengthFrames = pcm.length / 2;
-        int fadeOutLengthFrames = getSeq().getConfig().getInt(FADE_LENGTH_FRAMES);
-
-        if (newLengthFrames > oldLengthFrames) {
-            getSeq().sendMessageToActivity(new PFSeqMessage(MESSAGE_TYPE_ERROR, "can't abridge clip to longer length"));
-            return pcm;
-        }
-
-        short[] arrayWithNewLength = Arrays.copyOfRange(pcm, 0, newLengthFrames * 2);
-
-        if (fadeOutLengthFrames > 0) {
-            arrayWithNewLength = applyFadeOut(arrayWithNewLength, fadeOutLengthFrames);
-        }
-
-        return arrayWithNewLength;
-    }
-    private short[] applyFadeOut(short[] pcm, int fadeLengthFrames) {
-        // this method definition assumes channel count is 2
-
-        int pcmLengthFrames = pcm.length / 2;
-
-//        long startingClock = System.currentTimeMillis();
-
-        // in case config value fade length is greater than clip length
-        int fadeLengthFramesSafe = fadeLengthFrames;
-        if (fadeLengthFrames > pcmLengthFrames) {
-            fadeLengthFramesSafe = pcmLengthFrames;
-        }
-
-        int startingFrame = pcmLengthFrames - fadeLengthFramesSafe;
-        int startingShort = startingFrame * 2;
-        int i;
-        double distanceFromEndFrames;
-        double positionInFade = 1;
-
-        for (i = startingShort; i < pcm.length; i += 2) {
-            distanceFromEndFrames = ((pcm.length - 2) - i) / 2;
-            // starts at (below) 1 and goes to 0
-            positionInFade = (double) distanceFromEndFrames / fadeLengthFramesSafe;
-
-            // first channel of frame
-            pcm[i] = (short) (pcm[i] * positionInFade);
-
-            // second channel of frame
-            pcm[i+1] = (short) (pcm[i+1] * positionInFade);
-        }
-//        Log.d(LOG_TAG, "time spent doing fade: " + (System.currentTimeMillis() - startingClock) + " ms. ");
-
-        return pcm;
-    }
-
     // work thread stuff
     private boolean startWorkThread() {
         if (workThread != null && workThread.isAlive()) {
@@ -443,14 +373,6 @@ public class PFSeqTrack {
             return true;
         }
         return false;
-    }
-    public int bytesPerFrame() {
-        // bit depth multiplied by the number of channels
-        if (at == null || !isInitialized()) {
-            return -1;
-        }
-
-        return 2 * 2;
     }
 
     // accessors

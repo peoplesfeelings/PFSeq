@@ -1,7 +1,10 @@
 package peoplesfeelingscode.com.pfseq;
 
 /*
-Time position relative to beginning of musical bar.
+Relative time position.
+When used for position, relative to beginning of musical bar.
+When used for item length, relative to item clip start.
+
 Fractional position corresponds to a "piano roll" user interface that looks like this:
 
 
@@ -17,8 +20,8 @@ Fractional position corresponds to a "piano roll" user interface that looks like
 
         assuming 2 beats per bar (time signature numerals can be set in the config)
 
-        "Pos" in the above grid would be defined like this:
-        beatOfBar: 1
+        "Pos" in the above grid represents 1 3/4 beats, and would be defined like this:
+        beats: 1
         mode: MODE_FRACTIONAL
         binaryDivisions: 4
         binaryPos: 3
@@ -37,7 +40,7 @@ a grid with triplets might look like this:
        |  :  :  |  :  :  |  :  :  |  :  :  |  :  :  |  :  :  |  :  :  |  :  :  |
        -------------------------------------------------------------------------
 
-        beatOfBar: 0
+        beats: 0
         mode: MODE_FRACTIONAL
         binaryDivisions: 4
         binaryPos: 3
@@ -49,7 +52,7 @@ public class PFSeqTimeOffset {
     public static final int MODE_FRACTIONAL = 0;
     public static final int MODE_PERCENT = 1;
 
-    private int beatOfBar; // 0-based
+    private int beats; // 0-based.
     private int mode; // one of the PFSeqTimeOffset.MODE_ constants
 
     // only used if mode is PERCENT:
@@ -62,8 +65,8 @@ public class PFSeqTimeOffset {
     private int tripletPos; // 0-based. 0 for on the binary position. 1 for a third of the way between that and the next binary position, etc
 
     // private constructor. use static make method
-    private PFSeqTimeOffset(int beatOfBar, int mode, double percentPos, int binaryDivisions, int binaryPos, boolean isTriplet, int tripletPos) {
-        this.beatOfBar = beatOfBar;
+    private PFSeqTimeOffset(int beats, int mode, double percentPos, int binaryDivisions, int binaryPos, boolean isTriplet, int tripletPos) {
+        this.beats = beats;
         this.mode = mode;
         this.percent = percentPos;
         this.binaryDivisions = binaryDivisions;
@@ -121,8 +124,8 @@ public class PFSeqTimeOffset {
     public int getTripletPos() {
         return tripletPos;
     }
-    public int getBeatOfBar() {
-        return beatOfBar;
+    public int getBeats() {
+        return beats;
     }
     public int getMode() {
         return mode;

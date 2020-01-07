@@ -17,9 +17,11 @@ import android.util.Log;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static android.os.Process.THREAD_PRIORITY_URGENT_AUDIO;
+import static peoplesfeelingscode.com.pfseq.PFSeqConfig.FADE_LENGTH_FRAMES;
 import static peoplesfeelingscode.com.pfseq.PFSeqConfig.FRAMES_TO_LEAVE_BEFORE_NEXT_ITEM;
 import static peoplesfeelingscode.com.pfseq.PFSeqConfig.MAX_BPM;
 import static peoplesfeelingscode.com.pfseq.PFSeqConfig.MAX_TRACKS;
@@ -245,7 +247,7 @@ public abstract class PFSeq extends Service {
                                 long silenceMillis = (currentMillis + millisAheadToWrite) - track.soonestWritableMillisImprecise();
                                 int silenceFrames = nanoToFrames(silenceMillis * (long) NANO_PER_MILLIS);
                                 if (silenceFrames > 0) {
-                                    short[] silence = track.makeSilence(silenceFrames);
+                                    short[] silence = makeSilence(silenceFrames);
                                     Log.d(LOG_TAG, "posting write - silenceUntilMapped " + silenceMillis  + " ms");
                                     track.postWrite(silence, true);
                                 }
@@ -335,7 +337,7 @@ public abstract class PFSeq extends Service {
                             if (spaceToFillNano > smallestStopgapSilenceNano) {
                                 int spaceToFillFrames = nanoToFrames(spaceToFillNano);
                                 Log.d(LOG_TAG, "spaceToFillFrames: " + spaceToFillFrames);
-                                track.postWrite(track.makeSilence(spaceToFillFrames), false);
+                                track.postWrite(makeSilence(spaceToFillFrames), false);
                             }
                         }
                     }
@@ -434,8 +436,8 @@ public abstract class PFSeq extends Service {
                                         Log.d(LOG_TAG, "posting write - silence only: " + (nanoWeWantWrittenUntil - soonestWritableNano) + " ns. next item is after time we want written until");
                                         writeSilenceToTrack(track, nanoWeWantWrittenUntil - soonestWritableNano);
                                     } else {
-                                        short[] clipPcm = nextPRItem.getClip().getPcm();
-                                        final short[] silence = track.makeSilence((int) nanoToFrames(nextPRItemNano - soonestWritableNano));
+                                        short[] itemPcm = nextPRItem.getPcm();
+                                        final short[] silence = makeSilence((int) nanoToFrames(nextPRItemNano - soonestWritableNano));
 
                                         // get nano start time of item AFTER the next item, so we can abridge the next item if needed
                                         long nextItemNanoPlusMinWritableNano = nextPRItemNano + minWritableContentNano;
@@ -444,21 +446,32 @@ public abstract class PFSeq extends Service {
                                         if (itemAfterNext != null) {
                                             long itemAfterNextNano = itemAfterNext.soonestNanoAfter(nextItemNanoPlusMinWritableNano);
 
-                                            // abridge next clip if item after it occurs before its end
+                                            // abridge
                                             long nextItemLengthNano = framesToNano(nextPRItem.lengthInFrames());
                                             long nextItemEndNano = nextPRItemNano + nextItemLengthNano;
                                             long nanotoLeaveBeforeNextItem = framesToNano(framesToLeaveBeforeNextItem);
+                                            int originalLengthFrames = itemPcm.length / 2;
+                                            int neededLengthFrames = originalLengthFrames;
                                             if (nextItemEndNano + nanotoLeaveBeforeNextItem > itemAfterNextNano) {
-                                                int newLengthFrames = nanoToFrames(itemAfterNextNano - nextPRItemNano) - framesToLeaveBeforeNextItem;
-                                                if (newLengthFrames < 0) {
-                                                    newLengthFrames = 0;
+                                                neededLengthFrames = nanoToFrames(itemAfterNextNano - nextPRItemNano) - framesToLeaveBeforeNextItem;
+                                                if (neededLengthFrames < 0) {
+                                                    neededLengthFrames = 0;
                                                 }
-                                                clipPcm = track.abridge(clipPcm, newLengthFrames);
+                                            }
+                                            if (nextPRItem.getLength() != null) {
+                                                long maxLengthFrames = nextPRItem.getLength().getLengthFrames();
+
+                                                if (maxLengthFrames < neededLengthFrames) {
+                                                    neededLengthFrames = (int) maxLengthFrames;
+                                                }
+                                            }
+                                            if (neededLengthFrames < originalLengthFrames) {
+                                                itemPcm = abridge(itemPcm, neededLengthFrames);
                                             }
                                         }
 
-                                        Log.d(LOG_TAG, "posting write - silence and item. nano: " + (framesToNano((silence.length + clipPcm.length) / 2) ) );
-                                        track.postWrite(combineShortArrays(silence, clipPcm), true);
+                                        Log.d(LOG_TAG, "posting write - silence and item. nano: " + (framesToNano((silence.length + itemPcm.length) / 2) ) );
+                                        track.postWrite(combineShortArrays(silence, itemPcm), true);
                                     }
                                 }
                             } else {
@@ -573,7 +586,7 @@ public abstract class PFSeq extends Service {
         return newBpm;
     }
     private void writeSilenceToTrack(PFSeqTrack track, long silenceNano) {
-        final short[] silence = track.makeSilence(nanoToFrames(silenceNano));
+        final short[] silence = makeSilence(nanoToFrames(silenceNano));
 //        Log.d(LOG_TAG, "posting write - silence only: " + silenceNano + " ns");
         track.postWrite(silence, true);
     }
@@ -637,6 +650,21 @@ public abstract class PFSeq extends Service {
         }
     }
 
+    // audio stuff
+    public short[] makeSilence(int lengthFrames) {
+//        Log.d(LOG_TAG, "makeSilence() - lengthFrames: " + lengthFrames + " shortsPerFrame(): " + shortsPerFrame());
+        if (lengthFrames < 0) {
+            stopSelf("negative frame length");
+        }
+
+        short[] shortArray = new short[lengthFrames * 2];
+
+        for (int i = 0; i < lengthFrames; i++) {
+            shortArray[i] = 0;
+        }
+
+        return shortArray;
+    }
     private short[] combineShortArrays(short[] array1, short[] array2) {
         if (array1 == null || array2 == null) {
             return null;
@@ -645,6 +673,65 @@ public abstract class PFSeq extends Service {
         System.arraycopy(array1, 0, joinedArray, 0, array1.length);
         System.arraycopy(array2, 0, joinedArray, array1.length, array2.length);
         return joinedArray;
+    }
+    public short[] abridge(short[] pcm, int newLengthFrames) {
+        int oldLengthFrames = pcm.length / 2;
+        int fadeOutLengthFrames = getConfig().getInt(FADE_LENGTH_FRAMES);
+
+        if (newLengthFrames > oldLengthFrames) {
+            sendMessageToActivity(new PFSeqMessage(MESSAGE_TYPE_ERROR, "can't abridge clip to longer length"));
+            return pcm;
+        }
+
+        short[] arrayWithNewLength = Arrays.copyOfRange(pcm, 0, newLengthFrames * 2);
+
+        if (fadeOutLengthFrames > 0) {
+            arrayWithNewLength = applyFadeOut(arrayWithNewLength, fadeOutLengthFrames);
+        }
+
+        return arrayWithNewLength;
+    }
+    private short[] applyFadeOut(short[] pcm, int fadeLengthFrames) {
+        // this method definition assumes channel count is 2
+
+        int pcmLengthFrames = pcm.length / 2;
+
+//        long startingClock = System.currentTimeMillis();
+
+        // in case config value fade length is greater than clip length
+        int fadeLengthFramesSafe = fadeLengthFrames;
+        if (fadeLengthFrames > pcmLengthFrames) {
+            fadeLengthFramesSafe = pcmLengthFrames;
+        }
+
+        int startingFrame = pcmLengthFrames - fadeLengthFramesSafe;
+        int startingShort = startingFrame * 2;
+        int i;
+        double distanceFromEndFrames;
+        double positionInFade = 1;
+
+        for (i = startingShort; i < pcm.length; i += 2) {
+            distanceFromEndFrames = ((pcm.length - 2) - i) / 2;
+            // starts at (below) 1 and goes to 0
+            positionInFade = (double) distanceFromEndFrames / fadeLengthFramesSafe;
+
+            // first channel of frame
+            pcm[i] = (short) (pcm[i] * positionInFade);
+
+            // second channel of frame
+            pcm[i+1] = (short) (pcm[i+1] * positionInFade);
+        }
+//        Log.d(LOG_TAG, "time spent doing fade: " + (System.currentTimeMillis() - startingClock) + " ms. ");
+
+        return pcm;
+    }
+    public int bytesPerFrame() {
+        // bit depth multiplied by the number of channels
+        if (!isSetUp()) {
+            return -1;
+        }
+
+        return 2 * 2;
     }
 
     // timing stuff
