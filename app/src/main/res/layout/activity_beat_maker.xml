@@ -31,5 +31,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="main activity" />
+
+        <Button
+            android:id="@+id/thingBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="do thing" />
     </LinearLayout>
 </android.support.constraint.ConstraintLayout>

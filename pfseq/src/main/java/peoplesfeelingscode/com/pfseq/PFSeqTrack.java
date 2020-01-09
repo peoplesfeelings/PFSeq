@@ -259,7 +259,7 @@ public class PFSeqTrack {
         return soonestItem;
     }
 
-    public PFSeqPianoRollItem getPrItemByName(String name) {
+    public PFSeqPianoRollItem getPrItem(String name) {
         for (PFSeqPianoRollItem item : pianoRoll) {
             if (item.getName().equals(name)) {
                 return item;

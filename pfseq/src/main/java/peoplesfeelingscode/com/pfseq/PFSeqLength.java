@@ -17,8 +17,6 @@ public class PFSeqLength {
     }
 
     public long getLengthFrames() {
-        double bpm = seq.getBpm().doubleValue();
-
         switch (mode) {
             case MODE_ABSOLUTE:
                 return seq.nanoToFrames(lengthAbsoluteNano);

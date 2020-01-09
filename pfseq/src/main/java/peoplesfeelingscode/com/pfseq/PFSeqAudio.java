@@ -128,4 +128,14 @@ public class PFSeqAudio {
 
         return shortArray;
     }
+
+    static public short[] applyVelocity(short[] pcm, double velocity) {
+        short[] newPcm = new short[pcm.length];
+
+        for (int i = 0; i < pcm.length; i++) {
+            newPcm[i] = (short) (pcm[i] * velocity);
+        }
+
+        return newPcm;
+    }
 }

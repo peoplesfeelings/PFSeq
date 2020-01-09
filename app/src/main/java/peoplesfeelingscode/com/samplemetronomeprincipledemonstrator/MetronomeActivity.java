@@ -186,7 +186,7 @@ public class MetronomeActivity extends PFSeqActivity {
         PFSeqTimeOffset timeOffset;
 
         timeOffset = PFSeqTimeOffset.make(0, PFSeqTimeOffset.MODE_FRACTIONAL, 0, 4, 0,false, 0);
-        PFSeqPianoRollItem item1 = new PFSeqPianoRollItem(seq, clip, "item 1", timeOffset, null);
+        PFSeqPianoRollItem item1 = new PFSeqPianoRollItem(seq, clip, "item 1", timeOffset);
         metronomeTrack.addPianoRollItem(item1);
 
         seq.addTrack(metronomeTrack);

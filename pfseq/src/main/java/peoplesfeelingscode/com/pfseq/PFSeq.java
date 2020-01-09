@@ -413,14 +413,13 @@ public abstract class PFSeq extends Service {
 //                        Log.d(LOG_TAG, "soonestWritableNano: " + soonestWritableNano);
 //                        Log.d(LOG_TAG, "written out " + ((soonestWritableNano - System.nanoTime()) / NANO_PER_MILLIS) + " ms");
 
+                        // if it's time to
                         if (soonestWritableNano < nanoWeWantWrittenUntil) {
                             if (track.getPianoRoll().size() > 0) {
                                 PFSeqPianoRollItem nextPRItem = track.nextPianoRollItemAfter(soonestWritableNano);
                                 if (nextPRItem == null) {
                                     if (isPlaying()) {
                                         // nextPianoRollItemAfter returned null. write silence
-                                        // maybe config is set to non-repeating and no more items.
-                                        // maybe user called setClip on a pianoroll item, assigning it a clip that didn't load successfully
                                         Log.d(LOG_TAG, "posting write - silence only: " + (nanoWeWantWrittenUntil - soonestWritableNano) + " ns. nextPRItem is null");
                                         writeSilenceToTrack(track, nanoWeWantWrittenUntil - soonestWritableNano);
                                     } else {
@@ -437,41 +436,41 @@ public abstract class PFSeq extends Service {
                                         writeSilenceToTrack(track, nanoWeWantWrittenUntil - soonestWritableNano);
                                     } else {
                                         short[] itemPcm = nextPRItem.getPcm();
-                                        final short[] silence = makeSilence((int) nanoToFrames(nextPRItemNano - soonestWritableNano));
+                                        final short[] leadingSilence = makeSilence((int) nanoToFrames(nextPRItemNano - soonestWritableNano));
 
-                                        // get nano start time of item AFTER the next item, so we can abridge the next item if needed
+                                        // abridge stuff
+                                        int originalLengthFrames = itemPcm.length / 2;
+                                        int neededLengthFrames = originalLengthFrames;
+                                        // get length needed due to subsequent item
                                         long nextItemNanoPlusMinWritableNano = nextPRItemNano + minWritableContentNano;
-
                                         PFSeqPianoRollItem itemAfterNext = track.nextPianoRollItemAfter(nextItemNanoPlusMinWritableNano);
                                         if (itemAfterNext != null) {
-                                            long itemAfterNextNano = itemAfterNext.soonestNanoAfter(nextItemNanoPlusMinWritableNano);
-
-                                            // abridge
+                                            long itemAfterNextPosNano = itemAfterNext.soonestNanoAfter(nextItemNanoPlusMinWritableNano);
                                             long nextItemLengthNano = framesToNano(nextPRItem.lengthInFrames());
                                             long nextItemEndNano = nextPRItemNano + nextItemLengthNano;
                                             long nanotoLeaveBeforeNextItem = framesToNano(framesToLeaveBeforeNextItem);
-                                            int originalLengthFrames = itemPcm.length / 2;
-                                            int neededLengthFrames = originalLengthFrames;
-                                            if (nextItemEndNano + nanotoLeaveBeforeNextItem > itemAfterNextNano) {
-                                                neededLengthFrames = nanoToFrames(itemAfterNextNano - nextPRItemNano) - framesToLeaveBeforeNextItem;
+                                            if (nextItemEndNano + nanotoLeaveBeforeNextItem > itemAfterNextPosNano) {
+                                                neededLengthFrames = nanoToFrames(itemAfterNextPosNano - nextPRItemNano) - framesToLeaveBeforeNextItem;
                                                 if (neededLengthFrames < 0) {
                                                     neededLengthFrames = 0;
                                                 }
                                             }
-                                            if (nextPRItem.getLength() != null) {
-                                                long maxLengthFrames = nextPRItem.getLength().getLengthFrames();
+                                        }
+                                        // get length needed due to length property
+                                        if (nextPRItem.getLength() != null) {
+                                            long maxLengthFrames = nextPRItem.getLength().getLengthFrames();
 
-                                                if (maxLengthFrames < neededLengthFrames) {
-                                                    neededLengthFrames = (int) maxLengthFrames;
-                                                }
-                                            }
-                                            if (neededLengthFrames < originalLengthFrames) {
-                                                itemPcm = abridge(itemPcm, neededLengthFrames);
+                                            if (maxLengthFrames < neededLengthFrames) {
+                                                neededLengthFrames = (int) maxLengthFrames;
                                             }
                                         }
+                                        // abridge
+                                        if (neededLengthFrames < originalLengthFrames) {
+                                            itemPcm = abridge(itemPcm, neededLengthFrames);
+                                        }
 
-                                        Log.d(LOG_TAG, "posting write - silence and item. nano: " + (framesToNano((silence.length + itemPcm.length) / 2) ) );
-                                        track.postWrite(combineShortArrays(silence, itemPcm), true);
+                                        Log.d(LOG_TAG, "posting write - silence and item. nano: " + (framesToNano((leadingSilence.length + itemPcm.length) / 2) ) );
+                                        track.postWrite(combineShortArrays(leadingSilence, itemPcm), true);
                                     }
                                 }
                             } else {
@@ -620,7 +619,7 @@ public abstract class PFSeq extends Service {
         Log.d(LOG_TAG, "track " + track.getName() + " - added to sequencer");
         return true;
     }
-    public PFSeqTrack getTrackByName(String name) {
+    public PFSeqTrack getTrack(String name) {
         for (PFSeqTrack track : tracks) {
             if (track.getName().equals(name)) {
                 return track;

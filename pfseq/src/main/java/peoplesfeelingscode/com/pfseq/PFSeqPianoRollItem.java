@@ -8,22 +8,27 @@ public class PFSeqPianoRollItem {
     private boolean enabled;
     private PFSeq seq;
     private PFSeqClip clip;
+    private short[] velocityPcm;
     private String name;
     private PFSeqTimeOffset timeOffset; // time position, relative to begginning of bar
     private PFSeqLength length; // length for clip to be abridged to, relative to
+    private double velocity;
 
-    // length argument can be null, if you don't want to specify length
-    public PFSeqPianoRollItem(PFSeq seq, PFSeqClip clip, String name, PFSeqTimeOffset timeOffset, PFSeqLength length) {
+    public PFSeqPianoRollItem(PFSeq seq, PFSeqClip clip, String name, PFSeqTimeOffset timeOffset) {
         this.seq = seq;
         this.name = name;
         this.timeOffset = timeOffset;
-        this.length = length;
         this.enabled = true;
+        this.velocity = 1;
         setClip(clip);
     }
 
     public short[] getPcm() {
-        return clip.getPcm();
+        if (velocity == 1) {
+            return clip.getPcm();
+        } else {
+            return velocityPcm;
+        }
     }
     public long soonestNanoAfter(long nano) {
         // may return a nanotime that is not actually after, but before, if pfseq config is set to non-repeating
@@ -62,8 +67,30 @@ public class PFSeqPianoRollItem {
     public int lengthInFrames() {
         return getClip().getPcm().length / 2;
     }
+    public void setVelocity(double velocity) {
+        if (velocity > 1) {
+            velocity = 1;
+        }
+        if (velocity < 0) {
+            velocity = 0;
+        }
+        if (velocity != 1)  {
+            boolean enabledToggled = false;
+            if (isEnabled()) {
+                setEnabled(false);
+                enabledToggled = true;
+            }
 
-    // accessors
+            velocityPcm = PFSeqAudio.applyVelocity(clip.getPcm(), velocity);
+
+            if (enabledToggled) {
+                setEnabled(true);
+            }
+        }
+        this.velocity = velocity;
+    }
+
+    // simple accessors
     public PFSeqClip getClip() {
         return clip;
     }
@@ -77,8 +104,14 @@ public class PFSeqPianoRollItem {
     public PFSeqTimeOffset getTimeOffset() {
         return timeOffset;
     }
+    public void setTimeOffset(PFSeqTimeOffset timeOffset) {
+        this.timeOffset = timeOffset;
+    }
     public String getName() {
         return name;
+    }
+    public void setName(String name) {
+        this.name = name;
     }
     public boolean isEnabled() {
         return enabled;
@@ -88,6 +121,12 @@ public class PFSeqPianoRollItem {
     }
     public PFSeqLength getLength() {
         return length;
+    }
+    public void setLength(PFSeqLength length) {
+        this.length = length;
+    }
+    public double getVelocity() {
+        return velocity;
     }
 }
 
