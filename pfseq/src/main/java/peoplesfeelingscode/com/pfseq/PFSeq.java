@@ -146,6 +146,7 @@ public abstract class PFSeq extends Service {
         return true;
     }
     public void play() {
+        Log.d(LOG_TAG, "play() called");
         if (!isSetUp() || tracks == null || tracks.size() == 0 || !allTracksInitialized()) {
             Log.d(LOG_TAG, "couldn't play");
             return;
@@ -153,7 +154,7 @@ public abstract class PFSeq extends Service {
         tempoStartNanotime = null;
 
         // start AudioTracks
-        Log.d(LOG_TAG, "start");
+        Log.d(LOG_TAG, "starting");
         isPlaying.set(true);
         for (int i = 0; i < tracks.size(); i++) {
             tracks.get(i).startAT();
@@ -486,6 +487,7 @@ public abstract class PFSeq extends Service {
         };
     }
     public boolean stop() {
+        Log.d(LOG_TAG, "stop() called");
 
         if (controlThreadHandler != null) {
             // clear all messages (includes posts)

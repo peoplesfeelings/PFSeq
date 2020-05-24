@@ -81,6 +81,7 @@ public class PFSeqTrack {
         return true;
     }
     void startAT() {
+        Log.d(LOG_TAG, TRACK_LOG_PREFIX + "hasUnderrun() is " + ( hasUnderrun() ? "true" : "false" ) );
         if (!isInitialized()) {
             Log.d(LOG_TAG, TRACK_LOG_PREFIX + "failed to start playing because track not initialized");
             return;
@@ -139,6 +140,7 @@ public class PFSeqTrack {
                 isPlaying.set(true);
                 atStartMillisImprecise = System.currentTimeMillis();
                 Log.d(LOG_TAG, TRACK_LOG_PREFIX + "preliminary silence written and audiotrack status is " + getPlaystateString());
+                Log.d(LOG_TAG, TRACK_LOG_PREFIX + "hasUnderrun() is " + ( hasUnderrun() ? "true" : "false" ) );
             }
         };
         isWriteLocked.set(true);
@@ -369,7 +371,7 @@ public class PFSeqTrack {
             return false;
         }
         if (at.getUnderrunCount() > 0) {
-            Log.d(LOG_TAG, TRACK_LOG_PREFIX + "underrun occurred");
+            Log.d(LOG_TAG, TRACK_LOG_PREFIX + "underruns:" + at.getUnderrunCount());
             return true;
         }
         return false;
