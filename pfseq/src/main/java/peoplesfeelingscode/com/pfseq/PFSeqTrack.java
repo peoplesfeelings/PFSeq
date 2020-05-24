@@ -152,14 +152,17 @@ public class PFSeqTrack {
             Log.d(LOG_TAG, TRACK_LOG_PREFIX + "failed to stop audiotrack");
             return false;
         }
+
         isPlaying.set(false);
         at.stop();
         stopWorkThread();
+        at.release();
+        initializeAT();
         nanoIsMapped = false;
-//        Log.d(LOG_TAG, TRACK_LOG_PREFIX + "setting write locked false");
         isWriteLocked.set(false);
 
-        Log.d(LOG_TAG, TRACK_LOG_PREFIX + "audiotrack stopped");
+        Log.d(LOG_TAG, TRACK_LOG_PREFIX + "end of stopAT()");
+        Log.d(LOG_TAG, TRACK_LOG_PREFIX + "hasUnderrun() is " + ( hasUnderrun() ? "true" : "false" ) );
         return true;
     }
     boolean sync(long contentStartNanotime) {
