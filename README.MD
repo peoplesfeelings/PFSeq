@@ -17,7 +17,7 @@ For audio tools like drum machines, samplers, metronomes, etc.
  - streaming PCM audio data to AudioTrack instances and not allowing AudioTrack to underrun
  - keeping count of frames written to an AudioTrack
  - mapping frame-position to JVM nanotime with an AudioTimestamp
- - the time of a given item is calculated relative to the content start time and with adequate precision
+ - the time of a given item is calculated relative to the tempo start time and with adequate precision
 
 ## Installation
 Add the pfseq AAR module to your Android project and make it a dependency for the project's app module. You can get the AAR from this demo app's **pfseq\build\outputs\aar** directory. You may need to run "rebuild project" in Android Studio to generate this.
@@ -42,6 +42,6 @@ https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html
 
 ## Other features
  - Includes decoder to get raw PCM data from encoded files such as MP3s
- - Length of audio clips can be specified as absolute or relative to time grid
+ - Length of audio clips can be specified as absolute or relative to tempo
  - Velocity of clips can be set
  - all mathematical operations pertinent to timing accuracy are marked in the code with "adjust to taste" comments
